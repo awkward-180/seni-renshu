@@ -106,6 +106,8 @@ section.q{background:var(--paper);border:1px solid var(--line);border-radius:10p
 .stem-wrap .stem{margin-top:2px}
 @media (max-width:560px){.stem-wrap .stem{font-size:14px;line-height:1.6;padding:8px 10px;margin-bottom:6px}.stem-wrap .words{font-size:12.5px;gap:0 10px;line-height:1.6}}
 .save-note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.btn.back{background:var(--mark);border-color:var(--mark);color:#ffffff;font-weight:700}
+.reveal-note{margin:16px 0 0;padding:8px 12px;border:1px solid var(--mark);border-radius:8px;color:var(--ink);font-size:13.5px;background:var(--paper)}
 .score .pt-big{font-size:17px;color:var(--indigo);font-weight:700}
 .result{background:var(--paper);border:2px solid var(--indigo);border-radius:12px;padding:20px 20px 14px;margin-top:28px}
 .result h2{font-family:var(--font-display);font-size:22px;margin:0 0 4px}
@@ -149,6 +151,7 @@ footer{margin-top:32px;font-size:12.5px;color:var(--muted)}
   </div>
 </div></div>
 <div class="wrap">
+  <p class="reveal-note" id="revealNote" hidden>解答を一時的に表示しています。得点・解答数は変わりません。「元に戻す」で元の画面に戻ります。</p>
   <main id="main"></main>
   <section class="result" id="result" aria-live="polite"></section>
   <footer>ページ番号は『繊維製品の基礎知識 第1部』本文の印刷ページです。正答は配布された解答表と照合済みです。</footer>
@@ -386,7 +389,8 @@ function render(){
   document.getElementById('score').innerHTML = `得点 <b class="pt-big">${done?Math.round(ok/done*100):0}</b>点<span class="sc-sub">（${ok}/${done}問正解）</span>`;
   const rows = Q.map(q=>{const its=q.sections? q.sections.flatMap(s=>s.items): q.items; const o=its.filter(it=>state[keyOf(q,it.k)]===it.a).length; const dn=its.filter(it=>state[keyOf(q,it.k)]!=null).length; return `<tr><th><a href="#${q.id}">${q.t}</a></th><td class="topic">${esc(q.topic)}</td><td class="num${dn&&o===dn?' full':''}">${dn?o+' / '+dn+'問正解':'未解答'}</td><td class="num">${dn?Math.round(o/dn*100)+'点':'—'}</td></tr>`;}).join('');
   document.getElementById('result').innerHTML = `<h2>現在の得点</h2><div class="big"><b>${done?Math.round(ok/done*100):0}</b><span>点 / 100点</span></div><p class="rmeta">解答した ${done}問のうち ${ok}問正解（全${total}問中 ${done}問解答済み）。解いた問題だけで100点満点に換算しています。</p><div class="tbl"><table><tbody>${rows}</tbody></table></div>`;
-  document.getElementById('revealAll').textContent = revealAll ? '解答を隠す' : '解答をすべて表示';
+  const rb=document.getElementById('revealAll'); rb.textContent = revealAll ? '元に戻す' : '解答をすべて表示'; rb.classList.toggle('primary',!revealAll); rb.classList.toggle('back',revealAll); rb.setAttribute('aria-pressed',String(revealAll));
+  document.getElementById('revealNote').hidden = !revealAll;
   if(!resetArmed) document.getElementById('reset').textContent = 'リセット';
   document.getElementById('saveNote').textContent = canSave ? '押した解答はこの端末のブラウザに自動で保存され、次に開いたときも続きから解けます（リセットで消去）。' : 'この環境では解答を保存できません。ページを閉じると解答は消えます。';
 }
