@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>繊維の一般知識 練習問題①</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky study bar on top, one narrow reading column of question cards; blanks are tappable chips */
+:root{
+  --bg:#f3f5f8;
+  --paper:#ffffff;
+  --ink:#1b2333;
+  --muted:#5d677a;
+  --line:#d9dee7;
+  --indigo:#23407a;
+  --indigo-soft:#e3e9f5;
+  --ok:#1f6b4a;
+  --ok-soft:#e1f1e8;
+  --ng:#a8323a;
+  --ng-soft:#f8e3e4;
+  --mark:#b8862b;
+  --font-display:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --font-body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic","Meiryo",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"Consolas",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11151d;--paper:#181e29;--ink:#e6eaf2;--muted:#9aa4b6;--line:#2c3545;
+  --indigo:#8fb0ec;--indigo-soft:#1f2b44;--ok:#6fcf9e;--ok-soft:#173326;--ng:#f08a90;--ng-soft:#3a1d21;--mark:#e0b260;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11151d;--paper:#181e29;--ink:#e6eaf2;--muted:#9aa4b6;--line:#2c3545;
+  --indigo:#8fb0ec;--indigo-soft:#1f2b44;--ok:#6fcf9e;--ok-soft:#173326;--ng:#f08a90;--ng-soft:#3a1d21;--mark:#e0b260;
+  color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.75;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:820px;margin:0 auto}
+header.top{padding-block:28px 8px}
+.eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--font-display);font-size:30px;line-height:1.3;margin:6px 0 8px;text-wrap:balance}
+.lede{color:var(--muted);margin:0;max-width:62ch}
+.points{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
+.points span.lbl{font-size:13px;color:var(--muted);margin-right:4px}
+.pt{font-size:13px;border:1px solid var(--mark);color:var(--mark);border-radius:4px;padding:1px 8px;text-decoration:none}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line);
+  margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.bar-in{max-width:820px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.nav{display:flex;flex-wrap:wrap;gap:4px}
+.nav a{font-family:var(--font-mono);font-size:12px;color:var(--indigo);text-decoration:none;border:1px solid var(--line);border-radius:4px;padding:2px 7px;font-variant-numeric:tabular-nums}
+.nav a.done{background:var(--indigo-soft);border-color:transparent}
+.nav a:focus-visible,.btn:focus-visible,.chip:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.score{font-family:var(--font-mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.score b{color:var(--ink)}
+.btn{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:6px;padding:4px 10px;cursor:pointer}
+.btn.primary{background:var(--indigo);border-color:var(--indigo);color:var(--paper)}
+main{display:grid;gap:28px;margin-top:24px}
+section.q{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 20px 8px;scroll-margin-top:90px}
+.q-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+.q-head h2{font-family:var(--font-display);font-size:22px;margin:0}
+.q-head .topic{color:var(--muted);font-size:14px}
+.q-head .star{font-size:12px;color:var(--mark);border:1px solid var(--mark);border-radius:4px;padding:0 6px}
+.q-head .prog{margin-left:auto;font-family:var(--font-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.inst{font-size:13px;color:var(--muted);margin:0 0 12px}
+.stem{background:var(--bg);border-radius:6px;padding:12px 14px;margin:8px 0 10px}
+.stem .roman{font-family:var(--font-mono);color:var(--muted);margin-right:6px}
+.blank{display:inline-block;min-width:2.2em;text-align:center;border-bottom:1.5px solid var(--indigo);color:var(--indigo);font-family:var(--font-mono);font-size:13px;padding:0 3px;margin:0 2px;line-height:1.4}
+.blank.filled{border-bottom-color:var(--ok);color:var(--ok);font-family:var(--font-body);font-weight:700}
+.words{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13.5px;color:var(--muted);margin:0 0 6px;padding:0;list-style:none}
+.words b{font-family:var(--font-mono);color:var(--ink);margin-right:3px}
+.item{border-top:1px dashed var(--line);padding:12px 0}
+.item:first-of-type{border-top:0}
+.item-text{margin:0 0 8px}
+.lab{font-family:var(--font-mono);font-weight:500;color:var(--indigo);margin-right:6px}
+.stmts{display:grid;gap:4px;margin:0 0 8px}
+.stmt{display:grid;grid-template-columns:auto 1fr;gap:8px}
+.stmt .n{font-family:var(--font-mono);color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13.5px;line-height:1.4;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer;text-align:left}
+.chip .num{font-family:var(--font-mono);color:var(--muted);margin-right:5px}
+.chip.num-only{min-width:38px;text-align:center;padding:5px 0}
+.chip:hover{border-color:var(--indigo)}
+.chip.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:700}
+.chip.wrong{background:var(--ng-soft);border-color:var(--ng);color:var(--ng);text-decoration:line-through}
+.chip[disabled]{cursor:default}
+.ex{margin-top:10px;border-left:3px solid var(--ok);padding:4px 0 4px 12px}
+.ex .verdict{font-weight:700;font-size:14px}
+.ex .verdict.ng{color:var(--ng)}
+.ex .verdict.ok{color:var(--ok)}
+.ex p{margin:4px 0 0}
+.ex .sv{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;margin-top:6px}
+.ex .sv .m{font-weight:700}
+.ex .sv .m.o{color:var(--ok)}
+.ex .sv .m.x{color:var(--ng)}
+.ref{display:inline-block;margin-top:6px;font-family:var(--font-mono);font-size:12px;color:var(--muted);background:var(--bg);border-radius:4px;padding:0 6px}
+.tf-key{font-size:12.5px;color:var(--muted);margin:0 0 6px}
+.save-note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+footer{margin-top:32px;font-size:12.5px;color:var(--muted)}
+@media (max-width:560px){h1{font-size:25px}section.q{padding:16px 14px 6px;scroll-margin-top:96px}.bar{padding-top:6px;padding-bottom:6px}.bar-in{gap:6px}.nav{flex-wrap:nowrap;overflow-x:auto;width:100%;padding-bottom:2px;-webkit-overflow-scrolling:touch}.nav a{flex:none}.tools{width:100%;flex-wrap:nowrap;gap:6px}.score{white-space:nowrap}.btn{padding:3px 8px;white-space:nowrap}}
+@media (prefers-reduced-motion:no-preference){.ex{animation:fade .2s ease-out}@keyframes fade{from{opacity:.4}to{opacity:1}}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">第69期 繊維の一般知識テスト ／ 2026年10月16日配布</div>
+    <h1>練習問題① 解答と解説</h1>
+    <p class="lede">選択肢をタップすると正誤と解説が出ます。解説は『繊維製品の基礎知識 第1部 繊維に関する一般知識』（新訂4版）の記述にもとづき、根拠ページを添えています。</p>
+    <p class="save-note" id="saveNote"></p>
+    <div class="points"><span class="lbl">学びのポイント</span>
+      <a class="pt" href="#q7">問7 編地特性</a><a class="pt" href="#q8">問8 編物構造</a><a class="pt" href="#q10">問10 前処理・仕上加工</a><a class="pt" href="#q11">問11 染色・色管理</a><a class="pt" href="#q12">問12 仕上加工・機能加工</a>
+    </div>
+  </header>
+</div>
+<div class="bar"><div class="bar-in">
+  <nav class="nav" id="nav" aria-label="問題へ移動"></nav>
+  <div class="tools">
+    <span class="score" id="score"></span>
+    <button class="btn primary" id="revealAll" type="button">解答をすべて表示</button>
+    <button class="btn" id="reset" type="button">リセット</button>
+  </div>
+</div></div>
+<div class="wrap">
+  <main id="main"></main>
+  <footer>ページ番号は『繊維製品の基礎知識 第1部』本文の印刷ページです。正答は配布された解答表と照合済みです。</footer>
+</div>
+
+<script>
+const TF = ['①②とも正しい','①正 ②誤','①誤 ②正','①②とも誤り'];
+const Q = [
+{id:'q1',t:'問1',topic:'羊毛の構造・高分子・繊維の改質',type:'shared',sections:[
+ {roman:'I',stem:'羊毛は、表皮部分に[A]があり、主要部のケラチンの構成アミノ酸の違い等により、[B]がクリンプの外側に[C]が内側となるバイラテラル構造となっている。',
+  words:['スケール','セルロース','パラコルテックス','ベータテックス','メタコルテックス','オルソコルテックス'],
+  items:[
+  {k:'A',a:1,w:'羊毛の表面はうろこ状の表皮（スケール）、内部は皮質部（コルテックス）でできている。スケールは問3Bのフェルト化の原因でもある。',r:'p.11–12'},
+  {k:'B',a:6,w:'皮質部はケラチンのアミノ酸組成の違いでオルソコルテックスとパラコルテックスの2層に分かれ、オルソが外側、パラが内側になって生来のクリンプ（捲縮）を作る。覚え方は「オルソ＝ソト（外）」。',r:'p.12'},
+  {k:'C',a:3,w:'内側はパラコルテックス。ベータテックス、メタコルテックスという用語はなく、ひっかけの選択肢。',r:'p.12'}]},
+ {roman:'II',stem:'合成繊維の原材料であるポリマーは、一般に分子量が[D]程度以上の化合物であり、基本となる化合物が鎖状に連なった構造をしている。ナイロン66はヘキサメチレンジアミンとアジピン酸を[E]により重合したものであり、ポリアクリロニトリルはアクリロニトリルを[F]により重合したものである。',
+  words:['1,000','10,000','100,000','重縮合','付加重合','開環重合','解重合'],
+  items:[
+  {k:'D',a:2,w:'厳密な境界はないが、一般に分子量10,000以上の化合物を高分子（ポリマー）という。このあたりから溶解性・溶液粘度・機械的性質に高分子特有の性質が現れる。',r:'p.4'},
+  {k:'E',a:4,w:'ジアミンとジカルボン酸が、水がとれながら結合する反応を繰り返すので重縮合（縮合重合）。ポリエステル（PET）も重縮合でつくる。',r:'p.5'},
+  {k:'F',a:5,w:'アクリロニトリル（CH₂=CH−CN）のように炭素間二重結合をもつビニル化合物は、何も脱離せずに次々と付加して高分子になる。これが付加重合。開環重合はε-カプロラクタムからナイロン6をつくる反応なので、ナイロン66と混同しないこと。',r:'p.5–6'}]},
+ {roman:'III',stem:'複数のポリマーを一つの紡糸ノズルから押し出して繊維化した繊維の総称を[G]といい、毛のバイラテラル構造を模倣した[H]や極細繊維の原料となる[I]などが製造されている。また、円形以外のノズルを用いて製造される繊維を[J]といい、絹の断面形状である[K]を模倣し、摩擦係数を増大させることにより[L]を再現した繊維も製造されている。',
+  words:['混合繊維','異型断面繊維','コンジュゲート繊維','サイドバイサイド型繊維','芯鞘型繊維','海島型繊維','偏平断面','三角断面','中空断面','キシミ感','吸湿性','保温性'],
+  items:[
+  {k:'G',a:3,w:'複数成分のポリマーを1本の繊維の中で接合したものがコンジュゲート（複合）繊維。並列（サイドバイサイド）型、芯鞘型、多芯型などがある。',r:'p.3, 43'},
+  {k:'H',a:4,w:'2成分を貼り合わせたサイドバイサイド型は、収縮差によって羊毛のバイラテラル構造と同じようにクリンプが出る。芯鞘型は芯に導電成分を入れて導電性繊維をつくる用途などに使う。',r:'p.3'},
+  {k:'I',a:6,w:'海島型繊維は2成分を複合紡糸し、織編物にしてから「海」成分を溶かして「島」成分だけを残すことで超極細繊維を得る。',r:'p.32'},
+  {k:'J',a:2,w:'化学繊維はノズル（紡糸口金）の形で円形以外の断面にできる。これが異形断面繊維で、三角・中空・偏平などはその種類。',r:'p.2, 30'},
+  {k:'K',a:8,w:'家蚕の絹（フィブロイン）の断面はおおよそ三角形。三角断面のポリエステルでシルクのような光沢を出す。',r:'p.1'},
+  {k:'L',a:10,w:'断面の凹凸が布の摩擦係数を増大させ、絹特有のキシミ感（シルクライクな手ざわり）が得られる。',r:'p.3'}]}
+]},
+{id:'q2',t:'問2',topic:'繊維の性質・製造・獣毛',type:'own',items:[
+ {k:'A',x:'破断するまでのエネルギーが[A]繊維は強靭であるといえる。',o:['大きい','小さい','変化しない'],a:1,w:'荷重−伸長曲線と横軸で囲まれた面積が破断仕事量で、単位長さ・単位太さあたりの値をタフネスという。大きいほど破断に要するエネルギーが大きく、強靭といえる。安全ベルトやロープなど産業資材で重視される。',r:'p.19'},
+ {k:'B',x:'一般的な化学繊維では、長く連続した状態のまま使う[B]から作られる糸がある。',o:['チョップ','ステープル','フィラメント'],a:3,w:'化学繊維は長繊維（フィラメント）と短繊維（ステープル）の両方が作られる。連続したまま使うのはフィラメント。ステープルは短く切って紡績に使う。',r:'p.14'},
+ {k:'C',x:'綿繊維はアオイ科ワタ植物の種子の[C]細胞が、細長く成長したものである。',o:['筋','幹','表皮'],a:3,w:'綿は種子の表皮細胞が細長く伸びたもので、主成分はセルロース。',r:'p.8'},
+ {k:'D',x:'その（綿の）繊維断面には、[D]が存在する。',o:['ルクス','ルーメン','ブラン'],a:2,w:'綿の中空部をルーメンという。ブランは絹の繭糸を構成する1本1本のフィブロイン繊維のことなので混同しないこと。',r:'p.8, 10'},
+ {k:'E',x:'ポリエステルやナイロンなどの合成繊維では、紡糸後は分子の配向や結晶が乱れた状態であり、十分な強さを与えるため[E]工程が必要である。',o:['固化','延伸','凝固'],a:2,w:'紡糸直後の繊維を長さ方向に引っ張る（延伸）と高分子が配向し、十分な強さの繊維になる。凝固は湿式紡糸で液中で固めること、固化は溶融紡糸で冷えて固まることで、どちらも延伸の前の段階。',r:'p.14'},
+ {k:'F',x:'炭素繊維には、ポリアクリロニトリル（PAN）系の繊維と[F]系の繊維がある。',o:['ペタ','メタ','ピッチ'],a:3,w:'炭素繊維はPAN繊維またはピッチ繊維を焼成・炭素化した無機繊維。',r:'p.34'},
+ {k:'G',x:'モヘヤとは[G]の毛である。',o:['アンゴラ山羊','アンゴラうさぎ','アンゴラフェレット'],a:1,w:'モヘヤ＝アンゴラ山羊の毛。素材名の「アンゴラ」はアンゴラうさぎの毛、カシミヤはカシミヤ山羊の毛。',r:'p.11'},
+ {k:'H',x:'モヘヤはメリノ羊毛より[H]ことが特徴である。',o:['細くてソフトな','太くてハリがある','ピリングが起こりやすい'],a:2,w:'表1−4では、モヘヤは「羊毛より太くてハリがあり、白く美しい光沢がある」とされている。',r:'p.12（表1−4）'}
+]},
+{id:'q3',t:'問3',topic:'繊維の試験・性質',type:'own',items:[
+ {k:'A',x:'2本の繊維をループ状にして、引張り試験をしたときの強さ',o:['結節強さ','引掛け強さ','折曲げ強さ'],a:2,w:'引掛け強さ（ループ強さ）の定義。結節強さは繊維に結び目を1つつけて引っ張ったときの強さ。どちらも繊維のもろさの評価に使う。',r:'p.19'},
+ {k:'B',x:'毛の表面にあるスケールの影響で、羊毛の織・編物が湿潤状態で揉まれると発生する現象',o:['捲縮化','フィブリル化','フェルト化'],a:3,w:'スケールのために根元→先端と先端→根元で摩擦係数が違う（摩擦の異方性）。水中で膨潤してスケールが立った状態で揉まれると、繊維が一方向に移動して絡み、目が詰まっていく。これがフェルト化（縮充）。',r:'p.11, 22'},
+ {k:'C',x:'直径が17〜21μmの、一般的な太さの羊毛',o:['ファインウール','ブロードウール','ストロングウール'],a:1,w:'17〜21μmをファインウールとして標準とし、それより太いものをストロングウール（コースウール、ブロードウール）、細いものをスーパーファインウールという。「一般的＝標準＝ファイン」と覚える。',r:'p.11'},
+ {k:'D',x:'酸化銅アンモニア溶液に溶解して製造される、再生繊維キュプラの主原料',o:['木材パルプ','コットンリンター','ナフサ'],a:2,w:'キュプラは綿花の種子のまわりに付いている短い繊維（コットンリンター）を原料とする。レーヨンの主原料は木材パルプ、ナフサは合成繊維の原料。',r:'p.15'},
+ {k:'E',x:'乾燥前の質量を基準とし、繊維中に含まれる水分量を割合で示した値',o:['水分率','含水率','吸水率'],a:2,w:'水分率＝(W−W′)／W′×100（乾燥後の質量が基準）、含水率＝(W−W′)／W×100（乾燥前の質量が基準）。分母の違いが出題ポイント。公定水分率は水分率のほう。',r:'p.23'}
+]},
+{id:'q4',t:'問4',topic:'糸の種類・加工糸・意匠糸',type:'own',items:[
+ {k:'A',x:'綿糸で、カーディング工程の後、短い繊維を積極的に除去して製造した糸',o:['カード糸','インターレース糸','コーマ糸'],a:3,w:'コーミング工程で短繊維を除去し、繊維の配列を整えた糸がコーマ糸で、強さ・外観に優れる。カード糸はコーミングを省いた糸。',r:'p.37'},
+ {k:'B',x:'毛糸のうち、短繊維を取り除き毛足の長い原毛を引き揃えて製造した糸',o:['梳毛糸','紡毛糸','モール糸'],a:1,w:'繊維長が長く上質な羊毛を使うのが梳毛糸（ウーステッド）。短繊維部分や反毛を原料とし、表面が粗でふっくらしているのが紡毛糸（ウーレン）。',r:'p.37'},
+ {k:'C',x:'蚕により作られた繭から糸を解じょし、数本束ねて1本の糸を作る工程',o:['精練','製糸','絹紡糸'],a:2,w:'繭を熱湯に漬けてセリシンを軟化させ、数個の繭から繭糸を引き出して集束しながら巻き取る。この工程が製糸。',r:'p.41'},
+ {k:'D',x:'製糸工程により製造した絹糸の呼び名',o:['練絹','繭糸','生糸'],a:3,w:'製糸でできた糸が生糸（セリシンが付いたまま）。精練でセリシンを除くと練絹になる。',r:'p.41'},
+ {k:'E',x:'2種類以上の短繊維同士を組み合わせて混合し紡績した糸',o:['混紡糸','混繊糸','交撚糸'],a:1,w:'ステープル同士を混ぜて紡績するのが混紡糸。フィラメント同士を混ぜるのが混繊糸、ステープルとフィラメントを混ぜるのが複合糸。',r:'p.36'},
+ {k:'F',x:'フィラメントをゆるやかなカール形状にし、中程度の伸縮性とかさ高性を付与する加工法',o:['擦過法','加撚−熱固定−解撚法','押し込み法'],a:1,w:'表2−8で、擦過法は「ゆるやかなカール、伸び：中程度、かさ高」。加撚−熱固定−解撚法はコイル・ループ状で伸び最大、押込み法は細かいジグザグで伸び小。',r:'p.49（表2−8）'},
+ {k:'G',x:'芯糸のまわりにからみ糸をループ状に形成させ、ループの撚り戻りによりツノ状にした飾り糸',o:['ノップヤーン','スラブヤーン','スナールヤーン'],a:3,w:'ループを撚り戻りでツノ状にしたのがスナールヤーン。ノップヤーンは糸の中に節（玉）を作った糸、スラブヤーンは部分的に太い所を作った糸。',r:'p.42'},
+ {k:'H',x:'スリットしたフィルムをフィブリル化するまで延伸した後に衝撃を加え、細い繊維に分割した糸',o:['ネップヤーン','スプリットヤーン','スリットヤーン'],a:2,w:'フィルムを延伸して所定幅に切ったままのものがスリットヤーン。さらにフィブリル化するまで延伸し、衝撃で細かく割ったものがスプリットヤーン。',r:'p.43'},
+ {k:'I',x:'ポリウレタンなどのフィラメントを芯糸にし、他の紡績糸またはフィラメントを巻き付けた糸',o:['コアヤーン','ラッピングヤーン','カバードヤーン'],a:3,w:'ポリウレタン等を芯にして別の糸を巻き付けたのがカバードヤーン。ラッピングヤーンは逆に、無撚りの天然繊維束を芯にしてフィラメントをらせん状に巻き付ける。コアヤーンはフィラメントの芯をステープルで包んだ2層構造の紡績糸。',r:'p.43, 38'}
+]},
+{id:'q5',t:'問5',topic:'糸の分類',type:'shared',sections:[
+ {stem:'糸は、[A]による分類と[B]による分類、製造・加工方法などによる分類がある。[A]においては、[C]糸、毛糸、麻糸、[D]糸などの天然繊維があり、化学繊維の中には、レーヨン糸に使われる[E]繊維、アセテート糸に使われる[F]繊維があり、そしてナイロン糸、ポリエステル糸、[G]糸などに使われる[H]繊維がある。次に[B]に目を向けると、[I]糸と[J]糸がある。天然繊維の[D]糸は、[I]糸と[J]糸の両方あるが、他の天然繊維は、[I]糸しかない。',
+  words:['絹','フィラメント','アクリル','繊維の形態','半合成','綿','再生','紡績','原料繊維','合成'],
+  items:[
+  {k:'A',a:9,w:'テキストの分類「(1)原料繊維の種類による分類」。',r:'p.36'},
+  {k:'B',a:4,w:'「(2)原料繊維の形態による分類」。紡績糸とフィラメント糸に分ける。',r:'p.36'},
+  {k:'C',a:6,w:'天然繊維の糸は綿糸・毛糸・麻糸・絹糸。Dが「紡績糸とフィラメント糸の両方がある」繊維なので、Cは綿に決まる。',r:'p.36'},
+  {k:'D',a:1,w:'絹糸には生糸（フィラメント糸）と絹紡糸（紡績糸）の両方がある。天然繊維で長繊維なのは絹だけ。',r:'p.36–37'},
+  {k:'E',a:7,w:'レーヨン・キュプラは再生繊維。',r:'p.36'},
+  {k:'F',a:5,w:'アセテートは半合成繊維。',r:'p.36'},
+  {k:'G',a:3,w:'ナイロン・ポリエステル・アクリル・ビニロンが合成繊維の糸の例。',r:'p.36'},
+  {k:'H',a:10,w:'合成繊維。',r:'p.36'},
+  {k:'I',a:8,w:'「他の天然繊維は（I）糸しかない」ので、短繊維から作る紡績糸。',r:'p.36'},
+  {k:'J',a:2,w:'フィラメント糸。天然繊維では絹だけが該当する。',r:'p.36'}]}
+]},
+{id:'q6',t:'問6',topic:'撚り・布の分類',type:'shared',sections:[
+ {roman:'I',stem:'繊維束に撚りをかけるとき、下端を固定し上端を時計回りに回転させる[A]とその逆に回転させる[B]がある。また、撚り数とともに糸の空隙率は変化し、小さい順に[C]、並撚り糸、[D]となる。糸を撚ることにより強さを増す理由は、糸を構成している繊維相互の[E]が大きくなるからである。',
+  words:['R撚り','甘撚り糸','S撚り','摩擦力','強撚糸','応力','Z撚り'],
+  items:[
+  {k:'A',a:3,w:'下端を固定し、上端を時計の針と同じ方向に回すとS撚り。',r:'p.38'},
+  {k:'B',a:7,w:'逆回転がZ撚り。紡績糸の単糸はZ撚りが多い。',r:'p.38, 46'},
+  {k:'C',a:5,w:'強く撚るほど糸がしまり、含気率（空隙率）が減る。最も小さいのが強撚糸で、製品の保温性は下がる。',r:'p.46'},
+  {k:'D',a:2,w:'撚りが甘いほど空隙が多い。強撚糸＜並撚り糸＜甘撚り糸の順。',r:'p.46'},
+  {k:'E',a:4,w:'撚りで繊維同士が押し付けられて摩擦力が増え、繊維の滑脱が防がれるので強くなる。ただし撚りすぎると強さは下がり、最大になる撚りを飽和撚りという。',r:'p.48'}]},
+ {roman:'II',stem:'衣服や装飾に用いられる材料には種々あるが、多くは繊維の集合体である[F]と、[G]類に分けられる。[F]のうち、糸をたて、よこに用いて、原則として互いに直角かつ上下に一定の規則にしたがって組織させたものを[H]、糸のループの連結により構成されたものを[I]、さらに3本以上の糸または糸束を斜めに交差させ、紐状・帯状に作ったものを[J]という。この他には、シート状のウェブをからませたり、接着させたりして製造される[K]がある。「雑貨工業品品質表示規程」では[G]を製品の全部または一部に使用して製造した製品は雑貨工業品となる。',
+  words:['組物','布','編物','不織布','網','革','レース','織物','ネット','綱'],
+  items:[
+  {k:'F',a:2,w:'布素材は大きく布（fabric）と革（leather）類に分けられる。',r:'p.54'},
+  {k:'G',a:6,w:'革。雑貨工業品品質表示規程では、革または合成皮革を使った上衣・ズボン・コートなどは繊維製品ではなく雑貨工業品（革製品）になる。',r:'p.54, 93'},
+  {k:'H',a:8,w:'織物の定義。',r:'p.54'},
+  {k:'I',a:3,w:'編物の定義（糸のループの連続）。',r:'p.54'},
+  {k:'J',a:1,w:'組物の定義（3本以上を斜めに交差、紐状・帯状）。',r:'p.54'},
+  {k:'K',a:4,w:'不織布の定義（ウェブをからませる・接着する。製織や編組によらない）。',r:'p.54'}]}
+]},
+{id:'q7',t:'問7',topic:'織物・編物の構造と特性',star:true,type:'tf',items:[
+ {k:'A',s1:'平織は糸の交錯点が最も多いので、糸が接近しにくく、糸密度は粗いが外観は密に見え、丈夫な布を得やすい。',s2:'斜文織の特徴は布面に斜め方向の斜文線が現れることである。',a:1,v1:[1,'平織の説明そのまま。'],v2:[1,'斜文織（綾織）は布面に斜文線（綾線）が出る。'],r:'p.55–56'},
+ {k:'B',s1:'完全組織内のたて、よこの糸数が等しい場合の斜文線の方向は組織図上で60°の角度をなす。',s2:'斜文織物はたて糸、よこ糸の浮きが平織より長く、交錯点が少ないので、糸密度を大きくできる。',a:3,v1:[0,'60°ではなく45°。斜文線が45°以外のものは急斜文・緩斜文という。'],v2:[1,'浮きが長く交錯点が少ないので糸密度を大きくでき、柔軟でしわになりにくい。'],r:'p.56–57'},
+ {k:'C',s1:'二重織はパイル織物を作る際に利用される。',s2:'からみ組織は糸と糸をからませて織るので、透け柄があっても目寄れを起こしにくい。',a:1,v1:[1,'二重織は布を厚く・強くする、両面織物や模様を織り出すほか、パイル織物（ビロードなど）を作るのにも利用される。'],v2:[1,'たて糸同士をからませるので、糸密度が粗くても糸が滑りにくく、ずれ動かない。絽・紗が代表例。'],r:'p.57–58'},
+ {k:'D',s1:'織物では、カバーファクタが小さいほど隙間が小さい。',s2:'編物のカバーファクタは、糸が太いほど、ループが小さいほど値が小さくなる。',a:4,v1:[0,'逆。カバーファクタは布が糸で占められる面積の割合なので、小さいほど隙間は大きい。'],v2:[0,'逆。糸が太いほど、ループが小さいほど値は大きくなる。'],r:'p.72–73'},
+ {k:'E',s1:'充填率の大きい織物は、生地がしまっていて風合いがかたい。',s2:'ゴム編は平編に比べて大きい含気率をもっている。',a:1,v1:[1,'充填率（パッキングファクタ）は織物の緻密さを総合的にとらえる値。大きいほどしまって硬い。織物で普通20〜50％、編物はこれより小さい。'],v2:[1,'立体的に編成されるゴム編は平編より含気率が大きい。'],r:'p.72–74'},
+ {k:'F',s1:'編物は構造的に多孔であるため、通気性に優れている。',s2:'編物は構造的に含気率が小さいため、無風時の保温性は高い。',a:2,v1:[1,'ループ間・繊維間の隙間が多く多孔性なので通気性に優れる。'],v2:[0,'含気率が「大きい」ため無風時の保温性が高い。反面、耐摩耗性は低い。'],r:'p.74'},
+ {k:'G',s1:'摩擦回数が増加すると、羊毛では発生したピルが次第に脱落して減少するが、ポリエステルは脱落しにくいため減少しにくい。',s2:'紡績糸使いの素材では、一般的に編物より織物の方がピルを生じやすい。',a:2,v1:[1,'羊毛は強さが小さいのでピルが脱落して減る。ナイロン・ポリエステルは強さが大きく、ピル数は横ばいで減らない（図3−34）。'],v2:[0,'逆。編物は構造が粗で撚りの甘い糸を使い、毛羽立ちやすいので、織物より編物の方がピルを生じやすい。'],r:'p.79'}
+]},
+{id:'q8',t:'問8',topic:'編物組織・布の力学特性・帯電',star:true,type:'own',items:[
+ {k:'A',x:'編物において、よこ編の基本組織は、平編、ゴム編、[A]である。',o:['パール編','シングルアトラス編','両面編'],a:1,w:'よこ編の基本組織は平編・ゴム編・パール編。アトラス編はたて編の組織、両面編（スムース）はゴム編から展開した組織。パール編は表裏同一で、ウエール方向の伸長性が最も大きい。',r:'p.67–68'},
+ {k:'B',x:'織物の引裂き破壊は、[B]と呼ばれる部分を起点として、伝播的に荷重が作用して糸の切断が進行する。',o:['タング','デル','テール'],a:2,w:'引張りは多数の糸が同時に切れるのに対し、引裂きはデル部で糸が1本ずつ順に切れていく（図3−30）。',r:'p.75'},
+ {k:'C',x:'同じ糸使いであれば、斜子織の引裂き強さは、平織の引裂き強さと比較して[C]。',o:['差がない','小さい','大きい'],a:3,w:'引張り強さは大差ないが、引裂き強さは斜子織が大きい。平織は1本ずつ抵抗するのに対し、斜子織は引きそろえた糸が同時に抵抗するため。伸びの小さい・密な・硬い織物は引裂き強さが小さくなる。',r:'p.76'},
+ {k:'D',x:'曲げ特性のうち[D]に対する寄与が大きいものは、繊維の初期引張り抵抗度と、糸の太さ、織編物の密度である。',o:['曲げ剛性','曲げ戻り性','曲げ伸び性'],a:1,w:'曲げ剛性の説明。繊維の曲げ剛性は直径の4乗と初期引張り抵抗度の積に比例する（p.21）。',r:'p.87'},
+ {k:'E',x:'[E]には、繊維の粘弾性的な性質の他に糸と糸の交差する点での接触圧力の影響もある。',o:['曲げ剛性','曲げ戻り性','曲げ伸び性'],a:2,w:'曲げ戻り性（ヒステリシス幅）の説明。「曲げ伸び性」という特性はない。',r:'p.87'},
+ {k:'F',x:'繊維同士の摩擦により一番高く帯電しやすい組み合わせは[F]である。',o:['羊毛−絹','ナイロン−ポリエステル','レーヨン−綿'],a:2,w:'帯電列は（＋）ナイロン、羊毛、絹、レーヨン、綿、アセテート、ポリエステル、アクリル（−）。列で離れている繊維同士ほど帯電圧が高い。羊毛−絹、レーヨン−綿は隣同士なので低い。',r:'p.85'},
+ {k:'G',x:'風合いの物理的因子における用語の組み合わせとして最も適したものは[G]である。',o:['曲げ変形−バイアス方向に引張る','圧縮変形−厚み方向に押さえる','伸長変形−両端をもって曲げる'],a:2,w:'布の5つの力学特性は、曲げ変形（両端を持って曲げる）、せん断変形（バイアス方向に引張る）、伸長変形（両端を持って引張る）、圧縮変形（厚み方向に押さえる）、表面特性。1と3は動作が入れ替えてある。',r:'p.86'}
+]},
+{id:'q9',t:'問9',topic:'不織布・皮革',type:'own',items:[
+ {k:'A',x:'短繊維を水中に均一に分散し、シート状に集積してウェブを結合する方法',o:['乾式法','湿式法','カーディング法'],a:2,w:'湿式法は抄紙法とほぼ同じで、短繊維を水中に分散して金網ですくい、脱水・乾燥する。',r:'p.90'},
+ {k:'B',x:'ウェブの接着方法において、化学的接着法にあてはまらないもの',o:['カレンダ法','レジンボンド法','スプレー法'],a:1,w:'化学的接着法（レジンボンド法）は接着剤を浸漬・スプレーなどで付与する。カレンダ法は加熱ロールで低融点繊維を溶かして接着する熱的接着法（サーマルボンド）。',r:'p.91'},
+ {k:'C',x:'紡糸機から出たフィラメントを熱風により吹き飛ばした後、ウェブを形成する不織布。極細繊維による不織布の生産が可能',o:['スパンボンド不織布','メルトブローン不織布','ステッチボンド不織布'],a:2,w:'メルトブロー法は熱風で吹き飛ばすので有限長のフィラメントになり、0.01dtexまでの極細繊維が得られる（フィルタ、マスクなど）。スパンボンドは連続フィラメントを振り広げて集積、ステッチボンドは糸で縫う方法。',r:'p.90–91'},
+ {k:'D',x:'天然皮革に外観や風合いを近づけ、内部構造も天然皮革に準じたものを目指して模造したもの',o:['合成皮革','人工皮革','擬皮革'],a:2,w:'「内部構造も天然皮革に準じる」のが人工皮革。合成皮革は織物・編物の基布に樹脂を塗って表面だけ革に似せたもの。',r:'p.96–97'},
+ {k:'E',x:'Dの基材として利用されるもの',o:['不織布','織物','編物'],a:1,w:'人工皮革の基材は極細繊維の不織布で、ポリウレタンを含浸させて作る。',r:'p.97'},
+ {k:'F',x:'鹿の革の銀面をサンドペーパーで擦って起毛させたもの',o:['エンボス革','スエード','バックスキン'],a:3,w:'バックスキンは鹿革の「銀面（表側）」を起毛。スエードは革の「肉面（裏側）」を起毛したもの。面の違いが出題ポイント。',r:'p.94'}
+]},
+{id:'q10',t:'問10',topic:'前処理・染料・色管理・仕上加工',star:true,type:'tf',items:[
+ {k:'A',s1:'絹の精練は、生糸の表面を被覆しているフィブロインをほぼ除去することである。',s2:'絹の精練では、セルラーゼによる酵素精練が行われている。',a:4,v1:[0,'除去するのはセリシン（20〜25％）。フィブロインは絹そのもの。'],v2:[0,'絹の酵素精練はたんぱく質分解酵素（プロテアーゼ）。セルラーゼは綿・麻・リヨセル用のセルロース分解酵素。'],r:'p.103–104, 141'},
+ {k:'B',s1:'漂白剤は、酸化型漂白剤と還元型漂白剤があり、一般的には後者が広く使われている。',s2:'過酸化水素漂白は、布に鉄サビなどの鉄分が付着していると、その部分で過酸化水素の分解が進んでピンホールの損傷が起こりやすい。',a:3,v1:[0,'広く使われているのは前者の酸化型。'],v2:[1,'鉄分が点状に付着していると過酸化水素の分解が急激に進み、ピンホールが生じる。'],r:'p.104–105'},
+ {k:'C',s1:'バット染料は、水不溶性で、各種堅ろう度が一般的に良好である。',s2:'金属錯塩酸性染料は、アニオン性で、金属が配位結合され、耐光など堅ろう度が高く、色は鮮やかである。',a:2,v1:[1,'鮮明さはやや欠けるが、耐光をはじめ各種堅ろう度が高い高級染料。'],v2:[0,'表4−4では「耐光など堅ろう度が高いが、色がくすむ」。「鮮やか」が誤り。'],r:'p.108（表4−4）, 111'},
+ {k:'D',s1:'顔料を繊維上に固定するためには、バインダーといわれる接着剤が必要である。',s2:'繊維着色用として使われる有機顔料は、無機顔料と比べて耐光性、耐熱性が高いものが多い。',a:2,v1:[1,'顔料は繊維に親和性がないので、バインダー（合成樹脂エマルジョン）で固着する。'],v2:[0,'有機顔料は鮮明な色と大きな着色力が特徴だが、無機顔料より耐光性・耐熱性が低いものが多い。'],r:'p.113'},
+ {k:'E',s1:'防汚加工のうち、汚れを落ちやすくする加工をソイルリリース加工という。',s2:'防汚加工のうち、汚れがつきにくくする加工をソイルガード加工という。',a:1,v1:[1,'SR加工。疎水性合成繊維に親水性化合物を付与し、洗濯で油汚れを落ちやすくする。'],v2:[1,'SG加工。主にふっ素系樹脂を使う。'],r:'p.139'},
+ {k:'F',s1:'繊維製品は様々な分光特性を持つ光源下で使用されるため、演色性には気をつける必要がある。',s2:'アイソメリズムは、特定の光源下で同じ色に見えることをいう。',a:2,v1:[1,'ある光源で同じ色に見えても、光源が変わると違う色に見える（演色性）ため注意が必要。'],v2:[0,'アイソメリズム（絶対等色）は分光反射曲線が同一で、どんな光源下でも同じ色に見える関係。特定の光源下でだけ同じ色に見えるのはメタメリズム（条件等色）。'],r:'p.127'},
+ {k:'G',s1:'潜在ひずみを除去し、かさ高性と伸縮性を向上させる処理をリラックス処理という。',s2:'フェルト化の効果により、組織を緻密にする処理を縮じゅうという。',a:1,v1:[1,'加工糸織編物を熱と機械的もみ作用で弛緩させる処理。'],v2:[1,'毛織物・編物をアルカリや石けんを含む液で湿らせ、たたいたり揉んだりして組織を緻密にする。'],r:'p.104'}
+]},
+{id:'q11',t:'問11',topic:'染色・捺染・色管理',star:true,type:'own',items:[
+ {k:'A',x:'水溶性の染料は、湿潤堅ろう度は低いが、耐ドライクリーニング性は高い。また、塩となっているため[A]が問題になることはない。',o:['光堅ろう度','摩擦堅ろう度','昇華堅ろう度'],a:3,w:'水溶性染料は塩なので昇華性がない。逆に水不溶性の染料（分散染料など）は湿潤堅ろう度は高いが、耐ドライクリーニング性や昇華堅ろう度が問題になることがある。',r:'p.110'},
+ {k:'B',x:'直接・反応・バット染料で綿を染める際の無機電解質や、酸性染料で羊毛・絹・ナイロンを染める際の酸を[B]という。',o:['促染剤','分散剤','緩染剤'],a:1,w:'染色速度・染着量を増す促染剤。無機電解質は染料と繊維の静電的な反発を弱め、酸は繊維上に染着座席（−NH₃⁺）をつくる。ポリエステルのキャリア剤も促染剤。緩染剤は逆に染色を遅らせてむらを防ぐ。',r:'p.113'},
+ {k:'C',x:'還元抜染剤は、主として直接・反応・分散染料などの[C]系染料に適用可能で、還元により[C]基を切断して無色とする。',o:['インジゴイド','アゾ','アントラキノン'],a:2,w:'還元でアゾ基（−N=N−）を切断する。還元抜染できないものには酸化抜染剤を使う。',r:'p.115'},
+ {k:'D',x:'染め足などと呼ばれる染色速度の近似した染料同士で染色処方を組むと、色の[D]が高まる。',o:['演色性','再現性','三属性'],a:2,w:'染め足のそろった染料で処方を組むと、色の再現性が高まる。',r:'p.126'},
+ {k:'E',x:'色見本に近似する過去に染めた色を既存データから検索する方法は、[E]とも呼ばれる。',o:['コンピュータカラーセッティング（CCS）','コンピュータカラーサーチング（CCS）','コンピュータレシピサーチング（CRS）'],a:2,w:'一定の色差の許容範囲で過去の処方データを検索する「色検索」。テキストでは「コンピュータカラーサーチ（CCS）」と表記。CCMと並んで色合わせの合理化につながる。',r:'p.126'},
+ {k:'F',x:'蛍光増白は[F]方法である。',o:['黄褐色の補色である青紫系の色素を付加させて白く見せる','紫外線を放射して一般に紫〜青色、400〜450nmの光を発光させる','紫外線を吸収して一般に紫〜青色、400〜450nmの光を発光させる'],a:3,w:'蛍光増白剤は紫外線を「吸収」して400〜450nm（紫〜青）の光を発する。1は青味付け（ブルーイング）の説明。',r:'p.105'},
+ {k:'G',x:'あらかじめ分散染料インクで印刷した紙を用いて、ポリエステル織編物に圧着して熱処理する一連の方法',o:['インクジェットプリント','サーモゾル染色','転写捺染'],a:3,w:'転写紙と布を圧着して模様を移す転写捺染（主に乾式の昇華転写捺染）。サーモゾル染色は分散染料をパッドして200℃付近の乾熱で染める方法。',r:'p.122–123'},
+ {k:'H',x:'ザプロ加工は、羊毛がアニオン化した金属錯塩を吸収する性質を利用し、[H]の錯塩を付着させることにより耐熱性を高める。',o:['リンやハロゲン','リンやアルミニウム','ジルコニウムやチタン'],a:3,w:'ザ・ウールマーク・カンパニーが開発した羊毛の防炎加工。消防服などに実用化されている。',r:'p.140'},
+ {k:'I',x:'整経に必要な総本数のたて糸を分けて束にし、連続的に染色する方法。主にデニムのたて糸をインジゴで染める',o:['ワープビーム染色','ロープ染色','マフ染色'],a:2,w:'たて糸を数百本ずつのロープ状の束にして連続染色する。糸の外側だけ染まり中心が白く残る「中白」のインジゴ染めに向く。ワープビーム染色はたて糸をビームに巻いてパッケージ染色機で染める方法。',r:'p.117'},
+ {k:'J',x:'拡布状で染液中のガイドロールを通して、2本のローラ間で交互に巻き取りながら染色を行う方法',o:['ジッガ染色','ウインス染色','パッドスチーム染色'],a:1,w:'ジッガ染色は浴比が小さく省エネだが、張力がかかり、エンディング（端と中央の色差）やモアレが起こりやすい。ウインス染色はロープ状の布をリールで循環させる方法。',r:'p.118'}
+]},
+{id:'q12',t:'問12',topic:'仕上加工・機能加工・染色機構',star:true,type:'own',items:[
+ {k:'A',x:'研磨により主にたて糸が毛羽立ち毛足は短くなる起毛。ピーチスキン調仕上げに用いられる',o:['針布起毛','エメリ起毛','あざみ起毛'],a:2,w:'エメリ起毛は研磨布で表面を摩耗して毛羽を出す。針布起毛は針布ローラで引っかき、主によこ糸を毛羽立てる。あざみ起毛は植物のあざみの実を使う方法。',r:'p.132'},
+ {k:'B',x:'耐薬品性の異なる2種の繊維を混用した織物に薬剤を印捺して、片方の繊維を分解または溶解除去して透明感のある模様を得る加工',o:['オパール加工','オーガンジ加工','リップル加工'],a:1,w:'オパール加工（抜蝕加工）。ポリエステルと綿の混用織物に酸を含む糊を印捺し、綿を炭化・除去する方法が主体。オーガンジ加工は薄い綿布を濃硫酸で処理して透明感と張りを出す加工、リップル加工はアルカリで部分的に収縮させてしぼを出す加工。',r:'p.134'},
+ {k:'C',x:'綿などのセルロース繊維またはその混紡織物に樹脂加工を応用して耐久性のあるプリーツ性、ウォッシュ・アンド・ウエア性を付与する加工。プレキュア法とポストキュア法がある',o:['防しわ加工','パーマネントプレス加工','シルケット加工'],a:2,w:'パーマネントプレス（PP）加工の定義。「プレキュア法とポストキュア法」がキーワード。防しわ加工は架橋でしわ回復性を高める加工、シルケット加工は濃いアルカリで綿に光沢を出す加工。',r:'p.136'},
+ {k:'D',x:'界面活性剤、シリコーンやポリエチレンの乳化物などで生地を処理し、繊維間の摩擦抵抗を減少させる。揉みや叩きなどの機械的作用を用いる方法もある',o:['クリアカット仕上げ','柔軟仕上げ','光沢仕上げ'],a:2,w:'柔軟仕上げの説明。クリアカット仕上げは毛織物の表面の毛羽を刈り取って織り目を鮮明にする仕上げ。',r:'p.129'},
+ {k:'E',x:'生地をラバーベルトなどに添わせ、予想される収縮に相当するだけたて方向に押し込んで仕上げ、寸法安定性を保証する方法',o:['ウォッシュ・アンド・ウエア方式','ポストキュア方式','サンフォライズ方式'],a:3,w:'圧縮収縮仕上げのうち、残留収縮率を測ってその分を押し込み、加工後に試験で確認して寸法安定性を保証するのがサンフォライズ式。',r:'p.136'},
+ {k:'F',x:'綿織物などを薬液に浸せきし、緊張下で加熱あるいは蒸気処理をする。薬剤が綿繊維内部まで深く浸透し、結晶および非晶構造を変化させる',o:['減量加工','カレンダ加工','液体アンモニア処理'],a:3,w:'液体アンモニア処理。強さ・寸法セット性・防しわ性・防縮性・風合いが向上するが、光沢や染色性の向上は小さい。形態安定加工の前処理に使われる。減量加工はポリエステルをアルカリで溶かして細くする加工。',r:'p.106'},
+ {k:'G',x:'水不溶性でそのままでは染まらない。アルカリとハイドロサルファイトで還元して水溶性のロイコ塩とし染色し、染色後の酸化で不溶性の染料に戻るため湿潤堅ろう度は高い',o:['建染染料の染色機構','カチオン染料の染色機構','分散染料の染色機構'],a:1,w:'建染（バット）染料の染色機構。問10Cのバット染料と同じ。分散染料は水に難溶で、分散した状態から疎水性繊維に染まる。',r:'p.110–111'},
+ {k:'H',x:'合成繊維に後加工で吸湿性を付与するため化学構造にヒドロキシ基・カルボキシ基などを導入する。吸水性は表面状態の影響が大きいため、表面に加工剤を付与する方法もある',o:['疎水性繊維の透湿加工','疎水性繊維の親水加工','親水性繊維の防水加工'],a:2,w:'親水加工の説明。吸湿性は化学構造によるので親水基を導入し、吸水性は表面状態によるので表面に加工剤を付ける。',r:'p.138'}
+]}
+];
+
+const state = {};      // key -> chosen number
+let revealAll = false;
+const SKEY = 'seni-renshu1-answers';
+let canSave = false;
+try {
+  localStorage.setItem(SKEY + '-test', '1'); localStorage.removeItem(SKEY + '-test'); canSave = true;
+  const raw = localStorage.getItem(SKEY);
+  if (raw) { const d = JSON.parse(raw); if (d && typeof d === 'object') for (const k in d) if (typeof d[k] === 'number') state[k] = d[k]; }
+} catch (e) { canSave = false; }
+function save(){ if(!canSave) return; try { localStorage.setItem(SKEY, JSON.stringify(state)); } catch (e) { canSave = false; } }
+let resetArmed = null;
+const total = Q.reduce((n,q)=>n+(q.sections?q.sections.reduce((m,s)=>m+s.items.length,0):q.items.length),0);
+
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function blanks(text, filled){
+  return esc(text).replace(/\[([A-L])\]/g,(m,k)=>{
+    const f = filled && filled[k];
+    return f ? `<span class="blank filled" data-b="${k}">${esc(f)}</span>` : `<span class="blank" data-b="${k}">（${k}）</span>`;
+  });
+}
+function keyOf(q,k){return q.id+'-'+k}
+
+function chipHTML(q,it,opts,numOnly){
+  const key = keyOf(q,it.k), ch = state[key], shown = ch!=null || revealAll;
+  return `<div class="chips" role="group" aria-label="${q.t} ${it.k} の選択肢">`+opts.map((o,i)=>{
+    const n=i+1; let cls='chip'+(numOnly?' num-only':'');
+    if(shown && n===it.a) cls+=' right';
+    else if(ch===n && n!==it.a) cls+=' wrong';
+    const label = numOnly? `<span>${n}</span>` : `<span class="num">${n}</span>${esc(o)}`;
+    return `<button type="button" class="${cls}" data-key="${key}" data-n="${n}" ${shown?'disabled':''} ${numOnly?`title="${esc(o)}"`:''}>${label}</button>`;
+  }).join('')+`</div>`;
+}
+function verdict(q,it){
+  const ch = state[keyOf(q,it.k)];
+  if(ch==null) return '';
+  return ch===it.a ? '<span class="verdict ok">正解</span>' : `<span class="verdict ng">不正解（あなたの解答：${ch}）</span>`;
+}
+function exHTML(q,it,optText){
+  const key=keyOf(q,it.k); if(state[key]==null && !revealAll) return '';
+  if(q.type==='tf'){
+    const mk=v=>v[0]?'<span class="m o">○</span>':'<span class="m x">×</span>';
+    return `<div class="ex">${verdict(q,it)} <b>正解 ${it.a}</b>（${TF[it.a-1]}）
+      <div class="sv">${mk(it.v1)}<span>① ${esc(it.v1[1])}</span>${mk(it.v2)}<span>② ${esc(it.v2[1])}</span></div>
+      <span class="ref">テキスト ${esc(it.r)}</span></div>`;
+  }
+  return `<div class="ex">${verdict(q,it)} <b>正解 ${it.a}　${esc(optText)}</b><p>${esc(it.w)}</p><span class="ref">テキスト ${esc(it.r)}</span></div>`;
+}
+
+function render(){
+  const main=document.getElementById('main');
+  main.innerHTML = Q.map(q=>{
+    let body='';
+    if(q.type==='shared'){
+      body = q.sections.map(s=>{
+        const filled={}; s.items.forEach(it=>{ if(state[keyOf(q,it.k)]!=null||revealAll) filled[it.k]=s.words[it.a-1]; });
+        return `<div class="stem">${s.roman?`<span class="roman">${s.roman}.</span>`:''}${blanks(s.stem,filled)}</div>
+          <ul class="words">${s.words.map((w,i)=>`<li><b>${i+1}</b>${esc(w)}</li>`).join('')}</ul>`+
+          s.items.map(it=>`<div class="item"><div class="item-text"><span class="lab">（${it.k}）</span></div>${chipHTML(q,it,s.words,true)}${exHTML(q,it,s.words[it.a-1])}</div>`).join('');
+      }).join('');
+    } else if(q.type==='tf'){
+      body = `<p class="tf-key">1：①②とも正しい　2：①正 ②誤　3：①誤 ②正　4：①②とも誤り</p>`+
+        q.items.map(it=>`<div class="item"><div class="stmts"><div class="stmt"><span class="lab">${it.k}.</span><span><span class="n">①</span> ${esc(it.s1)}</span></div><div class="stmt"><span></span><span><span class="n">②</span> ${esc(it.s2)}</span></div></div>${chipHTML(q,it,TF,false)}${exHTML(q,it)}</div>`).join('');
+    } else {
+      body = q.items.map(it=>{
+        const filled={}; if(state[keyOf(q,it.k)]!=null||revealAll) filled[it.k]=it.o[it.a-1];
+        const txt = it.x.includes('[')? blanks(it.x,filled) : `<span class="lab">${it.k}.</span>${esc(it.x)}`;
+        return `<div class="item"><p class="item-text">${it.x.includes('[')?'':''}${txt}</p>${chipHTML(q,it,it.o,false)}${exHTML(q,it,it.o[it.a-1])}</div>`;
+      }).join('');
+    }
+    const items = q.sections? q.sections.flatMap(s=>s.items): q.items;
+    const done = items.filter(it=>state[keyOf(q,it.k)]!=null).length;
+    const ok = items.filter(it=>state[keyOf(q,it.k)]===it.a).length;
+    return `<section class="q" id="${q.id}"><div class="q-head"><h2>${q.t}</h2><span class="topic">${esc(q.topic)}</span>${q.star?'<span class="star">学びのポイント</span>':''}<span class="prog">${ok}/${done} 正解 ・ 全${items.length}問</span></div>${body}</section>`;
+  }).join('');
+  // nav + score
+  let done=0, ok=0;
+  document.getElementById('nav').innerHTML = Q.map(q=>{
+    const items = q.sections? q.sections.flatMap(s=>s.items): q.items;
+    const d = items.every(it=>state[keyOf(q,it.k)]!=null);
+    items.forEach(it=>{const c=state[keyOf(q,it.k)]; if(c!=null){done++; if(c===it.a) ok++;}});
+    return `<a href="#${q.id}" class="${d?'done':''}">${q.t.replace('問','')}</a>`;
+  }).join('');
+  document.getElementById('score').innerHTML = `解答 <b>${done}</b>/${total}　正解 <b>${ok}</b>`;
+  document.getElementById('revealAll').textContent = revealAll ? '解答を隠す' : '解答をすべて表示';
+  if(!resetArmed) document.getElementById('reset').textContent = 'リセット';
+  document.getElementById('saveNote').textContent = canSave ? '押した解答はこの端末のブラウザに自動で保存され、次に開いたときも続きから解けます（リセットで消去）。' : 'この環境では解答を保存できません。ページを閉じると解答は消えます。';
+}
+
+document.getElementById('main').addEventListener('click',e=>{
+  const b=e.target.closest('button.chip'); if(!b||b.disabled) return;
+  state[b.dataset.key]=Number(b.dataset.n);
+  save();
+  const y=b.getBoundingClientRect().top;
+  render();
+  const nb=document.querySelector(`button.chip[data-key="${b.dataset.key}"]`);
+  if(nb){ window.scrollBy(0, nb.getBoundingClientRect().top - y); }
+});
+document.getElementById('revealAll').addEventListener('click',()=>{revealAll=!revealAll;render();});
+document.getElementById('reset').addEventListener('click',e=>{
+  if(!resetArmed){ e.currentTarget.textContent='もう一度押すと消去'; resetArmed=setTimeout(()=>{resetArmed=null; render();},3000); return; }
+  clearTimeout(resetArmed); resetArmed=null;
+  for(const k in state) delete state[k]; revealAll=false;
+  if(canSave){ try{ localStorage.removeItem(SKEY); }catch(err){} }
+  render();
+});
+render();
+</script>
+
+</body>
+</html>
