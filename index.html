@@ -100,6 +100,11 @@ section.q{background:var(--paper);border:1px solid var(--line);border-radius:10p
 .ex .sv .m.o{color:var(--ok)}
 .ex .sv .m.x{color:var(--ng)}
 .ref{display:inline-block;margin-top:6px;font-family:var(--font-mono);font-size:12px;color:var(--muted);background:var(--bg);border-radius:4px;padding:0 6px}
+.ref{display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:none;padding:0;margin-top:8px}
+.ref a.pg{display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:2px 12px;border:1.5px solid var(--indigo);border-radius:8px;background:var(--paper);color:var(--indigo);font-size:13px;font-weight:600;text-decoration:none}
+.ref a.pg::before{content:"📖"}
+.ref a.pg:hover,.ref a.pg:active{background:var(--indigo-soft)}
+.ref .pnote{font-size:12px;color:var(--muted);margin-left:-2px}
 .tf-key{font-size:12.5px;color:var(--muted);margin:0 0 6px}
 .sec{position:relative}
 .stem-wrap{position:sticky;top:var(--barH,64px);z-index:3;background:var(--paper);margin:0 -6px;padding:6px 6px 2px;max-height:50vh;overflow-y:auto;border-bottom:1px solid var(--line);box-shadow:0 6px 8px -8px rgba(0,0,0,.25)}
@@ -318,6 +323,16 @@ let resetArmed = null;
 const total = Q.reduce((n,q)=>n+(q.sections?q.sections.reduce((m,s)=>m+s.items.length,0):q.items.length),0);
 
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const PG={"1":"13bB5rntYGX3vBBW1B5URjh7xbB-Nyc0U","2":"1KRlUx-TLKdc09X1UkQyaqExLdoVyhvi-","3":"1E7bSrUJHUauwKQ7RarHnBX8z9N6vvabY","4":"1LWRABOk9EBhCcwEMzpIt3gr9oGjYb-6l","5":"1TO9wTtImXqpotPqSRtUAIS-Vve71yCFf","6":"14sL9EUv1oC0uvzkuRwu_A3sjKKlZH47T","8":"1Ir1mpVH-mKRdgSWzEvhxb1K7F8M47VTv","10":"1EPUeHK_w1J5c7NmJlTTDuSXk9laUOlVD","11":"1sPuxDURyLVgLO4_oDYq8FxYB_r5P1Q3P","12":"1_MmUXho5SZxGWfJI_iDEhvA63tl2a2md","14":"1h6PFM6r0ZXPDxhJ5VgE61Yo0mj0s11Tv","15":"1YW4Oi71mKS8DFiTX8GvYySovyZwLpZ-Y","19":"1y2nKJUILLR7j_A_9ZGUyfUF5lKDeQtOE","21":"1mnZ6CWUFRn24bBwQayv_NInEx0cyaaOA","22":"1t2OxeSVFwBQnKn2FL_mWsH19dRPG--AP","23":"1VvxXzuUNYymcmpxpgv3UyiEk13wRseEg","30":"1_A4-HZZd6z6dNxG-Tr07B0MJtYco17iC","32":"11iA4qnAcV5pol4sW8Wf-LuRhbMBZg_W_","34":"1bb21TmAALgvxdZXVevC0Z6KwihRmpDDy","36":"1RtEOUCXUOHre0F3lb5PtYjthhZdOH19O","37":"1ci47jQjqidtLi8joFFtS6rOh9qVy_lGa","38":"1nNulRloyGEkG391Nd7B-rSvBfTcsKHp-","41":"1ex8oK7WAyWLt2NWdlAid32L4gQVu_wHs","42":"1o1QLBwcAlFlnIwfPTgOejmfpiBppO3wv","43":"1q8cKcOXZ_28A96ZST1kJpLTsu-cEhrM5","46":"1ft69BvOHZ-C0eyp-Z9CreNmDCZXnjdNm","48":"1XzY5XCFw8yxeaudqzcpxUIlywP8PpW2t","49":"1eVatdUJeuWR4oWClETB_uG1n3ukh-jV4","54":"1M3Gyu5Sn4x4XGu60B4OOJvXOJLnLDaEp","55":"1MiB2Kr7mhzEBymK9ZKCcoRHim704FjkC","56":"1DwztBXXlj7TKdwDIy0RkZRGfk2KUe74G","57":"1ALciCqZN_3sMPgTFE1BrxxTKvUM2GaWI","58":"1YN_Cgze8ykg084lo3u2I581G3mphlrSt","67":"1nfdZTbC_n1nW0k4_67DXKhokgS02eQ-m","68":"1OLqtTl8ZnsZp1HdnRstQ0aqjSmusymPO","72":"18AR8ufwcHZmCx21Kf3AF4GWbOs51Mw1A","73":"1STBZVnrDhgCyCSJsF8Pg13PLplS60s3j","74":"1wbxpIrRCFDafGe8jyAhfU5Jd4Kw6S21e","75":"1UCLFeKLenKmb3kjm3Q4Q5y9kOAe6Jbjy","76":"1zp8U1WeoQWBrc7DKfGzLVOK5anbhDnAI","79":"1p_5Zxyx0HSdwYO_GNDMQwSsTXq47lJlo","85":"15OI7DU41vtMTTsMsnl2ayegVhKHDEEa2","86":"1yGuMr7HkNGvxSCzEgsTs4xGJ2bvWclk6","87":"193Tex3rWPIU50s7-vmQaOmNrjbgHuyxE","90":"1PP6e5sQDmsAkZpeMbYPkjn6rMU76mlGR","91":"1yKJJyVWpzcdhd3A9ppkAwbN3XH5Ro9rH","93":"17OT-x-Ye6tYGVhwTcfUcd4cybKnOC21y","94":"1TLpg7TTdryIHlRpwIRE5kRVNGN5CUVjW","96":"1DrSSmDFRT8uGNk-sOCo6MA0teElOWBw3","97":"196INsN0r30JyIvkJ-3vTc9AcM__VV5dZ","103":"1R_qUu3uH9NdOiCFHrusmybvcyChH7SQP","104":"1xkMV2XDMxWbmfIXoCLkdABWV2EArem0R","105":"1Mgq1USZ9a3YU9K7tCA48HkDtiYwgoZgE","106":"14BN5Acw5abDpDwePvJdU-6ICmKfkychR","108":"1GfFiTe-9RtpMtRKvlSvEDftogCfFWHi9","110":"1n3o8MHy4OtFuGPESMZD8IxJoZpVB8xSl","111":"1kFAkfOGCkHZR7UkTwte5rWh4b5uAytZk","113":"1xjy5pmLajzwAf1XK7I904Xx0YgiwkBVp","115":"1kOYQpUzAobd_QRCTarcCcFzNPgtQ3Qmf","117":"1oOfi6WX5vgg8SgvKJ2rJmJTMXYobr3EQ","118":"10nOfFm2GqJcL66TvPSpWgSFsWoOLP9yu","122":"1xsm_cLKHkl5RHWjKRJVsTn66GmkLtpF-","123":"1ckOEhlvw4rttTCVQgTjmWJoUfhRzE_nF","126":"1bNTWytUH0breCHHx6f_rUHfek9uysAGh","127":"1_fPjgOVkwLBFl4IdVqDmzu2PYWcLeItW","129":"12LGWGrGvBK6JR-HsBo7xvqoeAfvU3t5-","132":"1RH3iZXYCYoCZx9mOHPMnXwGZ0PgpkWWv","134":"1beItd9t_B5R3_mcjKecTaVPD8Fxhj0eM","136":"11KG7GY-Zrur5KqfoNgnkoyo_Yf9luQ6y","138":"1lwPgWn4i0TIh0nOu48iA3XfSBeU4Myj_","139":"199qe6SbNwyIIISJ8UHfhiCw04lPw215s","140":"1l7fNzdhiSpETk6Pr40ZzwmZuuTKTNtvZ","141":"1USMgzN8nG_JVuPw7PPcc7sH6Z9yD5c80"};
+function refHTML(r){
+  const lk=n=>PG[n]?`<a class="pg" href="https://drive.google.com/file/d/${PG[n]}/view" target="_blank" rel="noopener">p.${n}</a>`:`p.${n}`;
+  return String(r).replace(/^p\./,'').split(/,\s*/).map(part=>{
+    const mm=part.match(/^(\d+)(?:–(\d+))?(.*)$/); if(!mm) return esc(part);
+    const a=+mm[1], b=mm[2]?+mm[2]:a, out=[];
+    for(let n=a;n<=b;n++) out.push(lk(n));
+    return out.join('')+(mm[3]?`<span class="pnote">${esc(mm[3])}</span>`:'');
+  }).join('');
+}
 function blanks(text, filled){
   return esc(text).replace(/\[([A-L])\]/g,(m,k)=>{
     const f = filled && filled[k];
@@ -347,9 +362,9 @@ function exHTML(q,it,optText){
     const mk=v=>v[0]?'<span class="m o">○</span>':'<span class="m x">×</span>';
     return `<div class="ex">${verdict(q,it)} <b>正解 ${it.a}</b>（${TF[it.a-1]}）
       <div class="sv">${mk(it.v1)}<span>① ${esc(it.v1[1])}</span>${mk(it.v2)}<span>② ${esc(it.v2[1])}</span></div>
-      <span class="ref">テキスト ${esc(it.r)}</span></div>`;
+      <span class="ref">テキスト ${refHTML(it.r)}</span></div>`;
   }
-  return `<div class="ex">${verdict(q,it)} <b>正解 ${it.a}　${esc(optText)}</b><p>${esc(it.w)}</p><span class="ref">テキスト ${esc(it.r)}</span></div>`;
+  return `<div class="ex">${verdict(q,it)} <b>正解 ${it.a}　${esc(optText)}</b><p>${esc(it.w)}</p><span class="ref">テキスト ${refHTML(it.r)}</span></div>`;
 }
 
 function render(){
