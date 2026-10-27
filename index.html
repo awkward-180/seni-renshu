@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>繊維の一般知識 練習問題①</title>
+<title>繊維の一般知識 練習問題</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@600;700&family=IBM+Plex+Mono:wght@500&display=swap">
@@ -112,6 +112,21 @@ section.q{background:var(--paper);border:1px solid var(--line);border-radius:10p
 @media (max-width:560px){.stem-wrap .stem{font-size:14px;line-height:1.6;padding:8px 10px;margin-bottom:6px}.stem-wrap .words{font-size:12.5px;gap:0 10px;line-height:1.6}}
 .save-note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
 .btn.back{background:var(--mark);border-color:var(--mark);color:#ffffff;font-weight:700}
+.sets{display:flex;align-items:center;gap:6px;width:100%;flex-wrap:wrap}
+.set-tab{font:inherit;font-size:13.5px;font-weight:700;border:1.5px solid var(--indigo);background:var(--paper);color:var(--indigo);border-radius:999px;padding:3px 14px;cursor:pointer;white-space:nowrap}
+.set-tab .st{font-family:var(--font-mono);font-weight:500;font-size:12.5px;margin-left:6px;opacity:.85}
+.set-tab[aria-selected="true"]{background:var(--indigo);color:var(--paper)}
+.set-tab:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+.avg{margin-left:auto;font-size:13px;color:var(--muted);white-space:nowrap}
+.avg b{font-family:var(--font-mono);font-size:17px;color:var(--mark);font-variant-numeric:tabular-nums;margin:0 1px}
+.sec-label{font-family:var(--font-mono);color:var(--indigo);font-weight:500;margin:6px 0 2px}
+.result .sets-tbl{margin:4px 0 18px}
+.result .sets-tbl tr.cur th{color:var(--indigo)}
+.result .sets-tbl tr.avg-row th,.result .sets-tbl tr.avg-row td{border-top:2px solid var(--ink);font-weight:700}
+.result h3{font-size:15px;margin:14px 0 4px}
+.stem-wrap{max-height:none!important;overflow:visible!important}
+.stem-wrap .stem{max-height:30vh;overflow-y:auto;overscroll-behavior:contain}
+@media (max-width:560px){.set-tab{padding:2px 10px;font-size:13px}.set-tab .st{margin-left:4px}.avg b{font-size:15px}}
 .reveal-note{margin:16px 0 0;padding:8px 12px;border:1px solid var(--mark);border-radius:8px;color:var(--ink);font-size:13.5px;background:var(--paper)}
 .score .pt-big{font-size:17px;color:var(--indigo);font-weight:700}
 .result{background:var(--paper);border:2px solid var(--indigo);border-radius:12px;padding:20px 20px 14px;margin-top:28px}
@@ -138,16 +153,15 @@ footer{margin-top:32px;font-size:12.5px;color:var(--muted)}
 
 <div class="wrap">
   <header class="top">
-    <div class="eyebrow">第69期 繊維の一般知識テスト ／ 2026年10月16日配布</div>
-    <h1>練習問題① 解答と解説</h1>
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="title"></h1>
     <p class="lede">選択肢をタップすると正誤と解説が出ます。解説は『繊維製品の基礎知識 第1部 繊維に関する一般知識』（新訂4版）の記述にもとづき、根拠ページを添えています。</p>
     <p class="save-note" id="saveNote"></p>
-    <div class="points"><span class="lbl">学びのポイント</span>
-      <a class="pt" href="#q7">問7 編地特性</a><a class="pt" href="#q8">問8 編物構造</a><a class="pt" href="#q10">問10 前処理・仕上加工</a><a class="pt" href="#q11">問11 染色・色管理</a><a class="pt" href="#q12">問12 仕上加工・機能加工</a>
-    </div>
+    <div class="points" id="points"></div>
   </header>
 </div>
 <div class="bar"><div class="bar-in">
+  <div class="sets" id="sets" role="tablist" aria-label="問題集を選ぶ"></div>
   <nav class="nav" id="nav" aria-label="問題へ移動"></nav>
   <div class="tools">
     <span class="score" id="score"></span>
@@ -164,7 +178,7 @@ footer{margin-top:32px;font-size:12.5px;color:var(--muted)}
 
 <script>
 const TF = ['①②とも正しい','①正 ②誤','①誤 ②正','①②とも誤り'];
-const Q = [
+const Q1 = [
 {id:'q1',t:'問1',topic:'羊毛の構造・高分子・繊維の改質',type:'shared',sections:[
  {roman:'I',stem:'羊毛は、表皮部分に[A]があり、主要部のケラチンの構成アミノ酸の違い等により、[B]がクリンプの外側に[C]が内側となるバイラテラル構造となっている。',
   words:['スケール','セルロース','パラコルテックス','ベータテックス','メタコルテックス','オルソコルテックス'],
@@ -309,18 +323,193 @@ const Q = [
 ]}
 ];
 
-const state = {};      // key -> chosen number
+const Q2 = [
+{id:'q1',t:'問1',topic:'天然繊維・化学繊維の性質と製法',type:'own',items:[
+ {k:'A',x:'天然繊維である苧麻の繊維長は[A]程度である。',o:['25〜30 mm','40〜50 mm','70〜280 mm'],a:3,w:'表1−1で苧麻（繊維細胞）の長さは70〜280mm。25〜30mmは亜麻（繊維細胞）の値。苧麻は「太くて長くシャリ感がある」、亜麻は「細くて短く綿に近い風合い」と覚える。',r:'p.1（表1−1）, 10'},
+ {k:'B',x:'苧麻の太さ（幅）は[B]程度である。',o:['10〜15 μm','15〜25 μm','25〜75 μm'],a:3,w:'表1−1で苧麻の幅は25〜75μm。長さ（A）と同じく、亜麻より太くて長いのが苧麻の特徴。',r:'p.1（表1−1）, 10'},
+ {k:'C',x:'羊毛繊維において、異なる構成アミノ酸組成からなるパラコルテックスとオルソコルテックスの2層が貼り合わさった構造のことを[C]といい、クリンプの原因になっている。',o:['ミセル構造','バイラテラル構造','コアシース構造'],a:2,w:'皮質部（コルテックス）がパラとオルソの2層に分かれたバイラテラル構造で、オルソコルテックスがクリンプの外側になる。練習問題①の問1でも出た頻出事項。',r:'p.1, 12'},
+ {k:'D',x:'中心を空洞にした中空繊維では[D]が向上する。',o:['耐熱性','はっ水性','保温性'],a:3,w:'中空繊維は繊維内部に空気を持たせたもので、軽量化・弾力性・保温性が向上する。ポリエステルでは中空率35〜40％の繊維が開発されている。',r:'p.2, 31'},
+ {k:'E',x:'植物繊維であるカポックは[E]に分類される。',o:['種子毛繊維','靱皮繊維','葉脈繊維'],a:1,w:'表1−3で種子毛繊維は綿・カポック・パンヤ。靱皮繊維は亜麻・苧麻など、葉脈繊維はマニラ麻・サイザル麻など。',r:'p.9（表1−3）'},
+ {k:'F',x:'化学繊維の製法には主に3つの方法があり、紡糸速度や生産性が高いのは[F]である。',o:['湿式紡糸','乾式紡糸','溶融紡糸'],a:3,w:'溶融紡糸は原料を溶かしてノズルから押し出し、冷やして繊維にする方法。紡糸速度を高められ生産性が高く、異形断面繊維の製造にも適する。ポリエステル・ナイロンなど。',r:'p.14'},
+ {k:'G',x:'アセテートは[G]により製造されている。',o:['湿式紡糸','乾式紡糸','溶融紡糸'],a:2,w:'乾式紡糸は溶剤に溶かした原料をノズルから押し出し、高温の気体中で溶剤を蒸発させて繊維化する。アセテートや乾式アクリルがこの方法。湿式紡糸はレーヨンや大部分のアクリル。',r:'p.14'},
+ {k:'H',x:'アセテート繊維とは、セルロースの−OH基（ヒドロキシ基）を[H]に置き換えた半合成繊維のことである。',o:['メチル基','アセトキシ基','アミノ基'],a:2,w:'アセテートはセルロースの−OH基をアセトキシ基（−OCOCH₃）に置き換えた酢酸セルロース繊維。',r:'p.13, 15'},
+ {k:'I',x:'アセテートは、綿やレーヨンと比較して[I]。',o:['吸湿性が高い','水による膨潤性が高い','水による収縮が小さい'],a:3,w:'アセテートは水に対する膨潤性が低いため、綿やレーヨンに比べて水による収縮が小さい。吸湿性は「適度」で、綿やレーヨンより低い。',r:'p.15'},
+ {k:'J',x:'吸湿性がなく耐熱性が低い水に浮く合成繊維には[J]がある。',o:['ポリプロピレン','ポリエステル','ポリアミド'],a:1,w:'ポリプロピレンは密度0.91g/cm³と合成繊維の中で最も軽く、水に浮く。吸湿性がなく（公定水分率0.0％）、耐熱性が低い。',r:'p.17, 24'}
+]},
+{id:'q2',t:'問2',topic:'繊維の力学・熱的性質と改質・スーパー繊維',type:'own',items:[
+ {k:'A',x:'繊維は一般的に吸湿により引張り強さは低下するが、[A]は湿潤すると、引張り強さは増加する。',o:['綿・麻','ポリエステル','ビニロン'],a:1,w:'湿度依存性：繊維は一般に吸湿で引張り強さが下がるが、綿・麻は湿潤すると引張り強さが増える。疎水性の合成繊維は湿潤してもあまり変わらない。',r:'p.19, 75'},
+ {k:'B',x:'繊維の断面を円と仮定した場合、繊維の曲げ剛性は、繊維の直径の[B]と初期引張り抵抗度の積に比例する。',o:['2乗','3乗','4乗'],a:3,w:'曲げ剛性は直径の4乗に比例する。わずかに細くするだけで曲げ剛性が大きく下がる（しなやかになる）ため、極細繊維は柔らかい。',r:'p.21'},
+ {k:'C',x:'繊維の曲げ剛性は、繊維の直径の4乗と初期引張り抵抗度の[C]。',o:['積に比例する','差に等しい','積に反比例する'],a:1,w:'「直径の4乗」×「初期引張り抵抗度」の積に比例する。ねじり剛性も同じく直径の4乗とねじり剛性率の積に比例する。',r:'p.21'},
+ {k:'D',x:'合成繊維を構成する高分子のガラス転移温度は[D]。',o:['水分があると上昇する','水分があると低下する','水分があっても変化しない'],a:2,w:'水中でのTgは乾燥状態に比べて低くなる（ポリエステルで約20℃低下、吸湿性のあるナイロンではさらに大きく下がる）。水が可塑剤のように働くため。',r:'p.25–26'},
+ {k:'E',x:'親水基を含む化合物やポリマーを合成繊維の繊維内部や繊維表面に導入することで、吸湿性だけでなく、[E]を付与することができる。',o:['はっ水性','制電性','帯電性'],a:2,w:'合成繊維への制電性の付与は、繊維内や繊維表面に親水性ポリマーを導入することで行う。吸湿して表面の電気抵抗が下がり、静電気が逃げやすくなる。',r:'p.31–32'},
+ {k:'F',x:'吸水・吸汗性を高めるには[F]は不適当である。',o:['繊維の表面積の低下','繊維の極細化','繊維側面の多孔化'],a:1,w:'吸水・吸汗性は毛管現象が大きく影響し、単位容積当たりの繊維表面積を増やすと向上する。手段は極細化・異形断面化・側面の多孔化など。表面積を「下げる」のは逆効果なので不適当。',r:'p.30–31'},
+ {k:'G',x:'ベンゼン環を含まない屈曲性の高分子で、工業的にゲル紡糸・超延伸により得られる高強度・高弾性率の繊維として[G]が知られている。',o:['ポリアリレート繊維','ポリエステル繊維','超高分子量ポリエチレン繊維'],a:3,w:'超高分子量ポリエチレン繊維は、屈曲性の高分子（ベンゼン環なし）をゲル紡糸・超延伸して高強度・高弾性率にした繊維。ポリアリレートは芳香族（ベンゼン環を含む）の液晶高分子。',r:'p.34'},
+ {k:'H',x:'引張り強さや引張り弾性率は炭素繊維と同程度で、難燃性や耐熱性が高く、熱分解温度は650℃程度で、限界酸素指数が合成繊維の中でも高い繊維として[H]が知られている。',o:['PBO繊維','PPTA系繊維','PPS繊維'],a:1,w:'PBO（ポリパラフェニレンベンゾビスオキサゾール）繊維は熱分解温度650℃、限界酸素指数68で合成繊維中最高レベル。PPTAはパラ系アラミド、PPSは高耐熱性繊維の例。',r:'p.30, 35'}
+]},
+{id:'q3',t:'問3',topic:'荷重−伸長曲線・応力とひずみ・粘弾性',type:'own',items:[
+ {k:'A',x:'繊維に引張り荷重を加えていくと、繊維は伸びる。荷重と伸びの関係を示した図を、[A]という。',o:['荷重−伸長曲線','負荷−伸び曲線','伸長伝達曲線'],a:1,w:'荷重−伸長曲線（強伸度曲線とも呼ぶ）。荷重を応力に、伸びをひずみに変換したものは応力−ひずみ曲線という。',r:'p.18'},
+ {k:'B',x:'荷重の単位としては[B]を用いる。',o:['N（ニュートン）','J（ジュール）','Pa（パスカル）'],a:1,w:'荷重の単位は以前はgfだったが、現在は国際単位系のN。繊維ではcN（センチニュートン）を使い、太さあたりのcN/dtexもよく使われる。Jはエネルギー、Paは応力の単位。',r:'p.18'},
+ {k:'C',x:'繊維にかかる荷重を[C]に変換した値を、応力と呼ぶ。',o:['単位伸びあたりの力','単位断面積あたりの力','単位荷重当たりの伸び'],a:2,w:'応力＝単位断面積あたりの力（Pa＝N/m²）。',r:'p.18'},
+ {k:'D',x:'応力は[D]で表す。',o:['N（ニュートン）','J（ジュール）','Pa（パスカル）'],a:3,w:'応力の単位はPa（＝N/m²）。荷重（B）はN、応力（D）はPaと対で覚える。',r:'p.18'},
+ {k:'E',x:'繊維の伸びを荷重前の試料長（初期長）で除した値を[E]と呼ぶ。',o:['尖度','弾性度','ひずみ'],a:3,w:'伸び（荷重時の長さ−試験長）を試験長で割った比率がひずみ。試験長100mmで20mm伸びればひずみ0.2、伸び率20％。',r:'p.18'},
+ {k:'F',x:'一般に繊維の変形による応力変化は時間依存性を示し、一定の伸びを与えておくと、応力は時間とともに減少する。これを[F]と呼ぶ。',o:['応力緩和','クリープ','内部緩和'],a:1,w:'ひずみ一定→応力が時間とともに減る＝応力緩和。どちらも弾性に加えて内部摩擦（粘性）を考える粘弾性の現象。',r:'p.20'},
+ {k:'G',x:'一定応力のもとで繊維の伸びは、時間とともに徐々に増加する。これを[G]と呼ぶ。',o:['応力緩和','クリープ','遅延緩和'],a:2,w:'応力一定→ひずみが時間とともに増える＝クリープ。F（応力緩和）と対で出題される。',r:'p.20'}
+]},
+{id:'q4',t:'問4',topic:'糸の製造・種類・太さの表示',type:'shared',sections:[
+ {roman:'I',stem:'',
+  words:['トウ紡績','ミュール紡績','オープンエンド紡績','カード糸','コーマ糸','梳毛糸','紡毛糸','混繊糸','絹紡糸','トラベラ','リング','ドラフトローラー'],
+  items:[
+  {k:'A',x:'化学繊維で長繊維状の繊維束を原料とし、繊維を引張って切断するなどして短繊維化し、スライバーを作り紡績する方法',a:1,w:'トウ（フィラメントの束）を牽切（引きちぎる）方式やカッターで短繊維化して紡績するのがトウ紡績。',r:'p.36'},
+  {k:'B',x:'綿糸で、短繊維を積極的に除去するコーミング工程を省略した糸',a:4,w:'コーミング工程を省いたのがカード糸。コーミングで短繊維を除いた糸がコーマ糸（練習問題①問4Aの逆パターン）。',r:'p.37'},
+  {k:'C',x:'毛糸で、原毛の短繊維部分や反毛などを原料とし、繊維の配列が比較的乱れているふっくらとした糸',a:7,w:'短繊維部分や反毛（再生羊毛）を原料とし、工程が短く、繊維の配列が乱れて表面が粗でふっくらしているのが紡毛糸。長く上質な羊毛を使うのは梳毛糸。',r:'p.37'},
+  {k:'D',x:'養蚕時や生糸を作る時に出る「出がら繭」や「きびそ」などを原料とする糸',a:9,w:'絹紡糸は副蚕糸（出がら繭、くず繭、きびそなど）を原料とする紡績糸。生糸は繭から直接引き出した糸。',r:'p.36–37'},
+  {k:'E',x:'リング精紡機で撚りをかけるために回転するパーツ',a:10,w:'リング精紡機では、繊維束がリングとトラベラの間を通ってボビンに巻き取られる。スピンドルの回転と糸の張力でトラベラがリングに沿って回り、撚りがかかる。',r:'p.40'}]},
+ {roman:'II',stem:'',
+  words:['混繊糸','混合糸','渦流紡績糸','複合糸','フィラメント加工糸','コンジュゲート糸','シックアンドシン糸','麻番手','綿番手','デニール','メートル番手','フィラメント糸','スパン糸'],
+  items:[
+  {k:'F',x:'絹や化学繊維など連続した繊維を所定の本数束ねた構造の糸',a:12,w:'フィラメント糸は絹や化学繊維の連続した繊維（フィラメント）を所定本数集めた糸。1本ならモノフィラメント糸、複数ならマルチフィラメント糸。',r:'p.36–37'},
+  {k:'G',x:'合成繊維の熱可塑性を利用してマルチフィラメントに半永久的な捲縮やねじれを与えた糸',a:5,w:'フィラメント加工糸（テクスチャードヤーン）の定義そのまま。仮撚り加工などで伸縮性・かさ高性を与える。',r:'p.37'},
+  {k:'H',x:'2種類以上のフィラメント繊維同士を混合した糸',a:1,w:'フィラメント同士＝混繊糸、ステープル同士＝混紡糸、ステープルとフィラメント＝複合糸。',r:'p.36, 38'},
+  {k:'I',x:'基準質量453.59 gの糸の長さが768.1 mの何倍あるかで表す糸の太さの表示法',a:9,w:'綿番手は453.59g（1ポンド）の糸の長さが768.1m（840ヤード）の何倍かで表す恒重式番手。麻番手は基準長さ274.32m（300ヤード）、メートル番手は1,000gで1,000m。',r:'p.44–45'},
+  {k:'J',x:'基準長さ9,000 mの糸の質量で表す糸の太さの表示法',a:10,w:'デニールは9,000mあたりのグラム数で表す恒長式。テックスは1,000mあたりのグラム数（1テックス＝9デニール）。',r:'p.44–45'}]}
+]},
+{id:'q5',t:'問5',topic:'布の性能・寸法安定性',star:true,type:'own',items:[
+ {k:'A',x:'織物がかぎ裂きで破れる場合に対する実用性能は[A]で評価される。',o:['破裂強さ','摩耗強さ','引裂き強さ'],a:3,w:'衣服は着用中、引張りよりも引裂きで破れることが多く、作業服や子供服ではかぎ裂きが生じやすい。その実用性能を調べるのが引裂き強さ。',r:'p.75'},
+ {k:'B',x:'繊維が高い[B]を持つと防しわ性は向上する。',o:['弾性回復力','引張り強さ','曲げヒステリシス'],a:1,w:'布を構成する繊維が変形しにくく、変形しても元に戻りやすければしわになりにくい。つまり繊維の弾性回復力が大きいほど防しわ性は高い。',r:'p.77'},
+ {k:'C',x:'編物で編糸が切断し編目の外れる現象を[C]という。',o:['ラン','スナッグ','ピル'],a:1,w:'ラン（ラダリング、伝線）はよこ編の欠点で、平編で特に起こりやすい。スナッグは糸が引っ掛かって引き出される現象、ピルは毛羽が絡んだ毛玉。',r:'p.68, 79'},
+ {k:'D',x:'セルロース繊維織物の収縮は、主に膨潤収縮と[D]がある。',o:['熱収縮','フェルト収縮','緩和収縮'],a:3,w:'綿・レーヨンなどセルロース繊維織物の収縮は、水を吸って膨潤する膨潤収縮と、潜在ひずみの解放による緩和収縮が主な原因。フェルト収縮は羊毛特有。',r:'p.80–81'},
+ {k:'E',x:'編物の収縮を抑えるためには、生産工程における給糸、巻取の際の[E]の管理が重要である。',o:['張力','風綿','汚染'],a:1,w:'編物の内部ひずみは主に引張り力から生じる。編成では編目のひずみを抑えるように給糸・巻き取りの張力管理が大切で、仕上げ加工でも張力管理に注意する。',r:'p.80'},
+ {k:'F',x:'吸水した布の乾燥において、水分率が直線的に減少したあとの乾燥過程は[F]である。',o:['恒率乾燥','減率乾燥','増率乾燥'],a:2,w:'乾燥はまず水分率が時間とともに直線的に減る恒率乾燥期（外の環境条件に支配）、その後乾燥速度が落ちていく減率乾燥期（繊維の性質が強く関係）と進む。',r:'p.83'},
+ {k:'G',x:'布のせん断変形は[G]でも測定できる。',o:['カンチレバー法','通気性試験','バイアス方向の引張り試験'],a:3,w:'布の力学特性のうち、せん断変形は「バイアス方向に引張る」変形。カンチレバー法は曲げ（剛軟度）の試験。',r:'p.86'}
+]},
+{id:'q6',t:'問6',topic:'不織布の製法',type:'shared',sections:[
+ {roman:'',stem:'',
+  words:['ステッチボンド不織布','ニードルパンチ不織布','スパンレース不織布','メルトブローン不織布','エアレイド不織布','スパンボンド不織布','ケミカルボンド不織布','湿式不織布'],
+  items:[
+  {k:'A',x:'「返し（バーブ）」のついた針の運動によって、ウェブ中の繊維を交絡する不織布',a:2,w:'特殊な形状の針でウェブを突き刺して繊維を絡めるのがニードルパンチ法。自動車内装材・土木用など用途は幅広い。',r:'p.91'},
+  {k:'B',x:'各種接着剤を使用して、ウェブ中の繊維間を接着する不織布',a:7,w:'接着剤で繊維を接着する化学的接着法。レジンボンド法、ラテックス接着法、ケミカルボンド法とも呼ばれる。',r:'p.91'},
+  {k:'C',x:'糸を用いて、ウェブを縫うことにより固定する不織布',a:1,w:'ウェブをフィラメント糸などで縫う方法がステッチボンド法（機械的接着法に含まれる）。',r:'p.91'},
+  {k:'D',x:'高圧水流によってウェブ中の短繊維を交絡する不織布',a:3,w:'高圧ジェット水流で繊維を絡めるのが水流交絡法（スパンレース法、ウォータジェットパンチ法）。ぬれティッシュや人工皮革の基布などに使われる。',r:'p.91'},
+  {k:'E',x:'紡糸されたフィラメントを直接的にシート状に積層することにより製造する不織布',a:6,w:'紡糸直結法の代表がスパンボンド法とメルトブロー法。スパンボンドは連続フィラメントでウェブを作り、メルトブローは熱風で吹き飛ばした有限長のフィラメントでウェブを作る。',r:'p.90'}]}
+]},
+{id:'q7',t:'問7',topic:'編物の組織と編機',star:true,type:'own',items:[
+ {k:'A',x:'よこ編の基本組織は平編、ゴム編、[A]である。',o:['天竺編','パール編','両面編'],a:2,w:'よこ編の基本組織は平編・ゴム編・パール編の3つ。天竺編は平編の別名、両面編はゴム編を2枚重ねた変化組織。',r:'p.67–68'},
+ {k:'B',x:'平編は[B]とも呼ばれる。',o:['リブ編','メリヤス編','リンクス編'],a:2,w:'平編は天竺編やメリヤス編とも呼ばれる。リブ編はゴム編、リンクス編はパール編の別名。',r:'p.68'},
+ {k:'C',x:'平編は、糸使いが同じなら基本組織の中では最も[C]編地になる。',o:['伸びる','厚い','薄い'],a:3,w:'平編は糸使いが同じなら基本組織の中で最も薄い編地。耳まくれしやすく、ランも起こりやすい。',r:'p.68'},
+ {k:'D',x:'ゴム編は[D]とも呼ばれる。',o:['リブ編','メリヤス編','リンクス編'],a:1,w:'ゴム編＝リブ編。ウエールごとに表目と裏目が交互する1×1ゴム編が最も基本。',r:'p.68'},
+ {k:'E',x:'ゴム編は[E]方向の伸長性が特に大きい組織である。',o:['コース','ワープ','ウエール'],a:1,w:'ゴム編は裏目のウエールが引っ込み表目のウエールが並ぶ構造で、コース方向（よこ方向）の伸長性が特に大きい。袖口・裾に使われる。ウエール方向の伸長性が最も大きいのはパール編。',r:'p.68'},
+ {k:'F',x:'ゴム編からは[F]などが誘導される。',o:['シングルコード編','サテン編','ミラノリブ編'],a:3,w:'ミラノリブは3給糸で1循環し、第2・第3給糸にミスを入れて作るゴム編の変化組織。シングルコード編はたて編の基本組織。',r:'p.69'},
+ {k:'G',x:'ゴム編からは、ミラノリブ編や[G]などが誘導される。',o:['片畦編','ガータ編','パイル編'],a:1,w:'片畦編はゴム編の一方の針床側にタックを入れた組織（図3−24）。ガータ編はパール編の別名。',r:'p.69'},
+ {k:'H',x:'両面編から誘導される変化組織には[H]がある。',o:['表鹿の子編','モックミラノリブ編','ダブルデンビ編'],a:2,w:'両面編から誘導されるのはモックミラノリブとロイヤルインターロック。表鹿の子編は平編から、ダブルデンビ編はたて編の変化組織。',r:'p.69'},
+ {k:'I',x:'たて編機では[I]に通された多数のたて糸を、筬で振って編針にかけて編地を編成する。',o:['筬','ガイド','シャットル（杼）'],a:2,w:'たて編機では、ガイド（導糸針）に通された多数のたて糸を筬で振って編針にかけて編成する。I＝ガイド、J＝筬の順番に注意。',r:'p.67'},
+ {k:'J',x:'たて編機では、ガイドに通された多数のたて糸を[J]で振って編針にかけて編地を編成する。',o:['筬','シンカー','シャットル（杼）'],a:1,w:'たて糸を振るのは筬（ガイドバー）。シンカーはよこ編機で編目の形成を助ける部品、シャットルは織機の杼。',r:'p.67'},
+ {k:'K',x:'たて編機では、[K]を使用することにより二重組織が編成される。',o:['前ヘルドと後ヘルド','前筬と後筬','フロントビームとバックビーム'],a:2,w:'2枚筬（前筬＝フロントバー、後筬＝バックバー）を使うと、両方の筬のたて糸が同時に編針にかかり、厚地で丈夫な生地になる。ハーフトリコット編がその代表。ヘルドは織機の部品。',r:'p.70–71'}
+]},
+{id:'q8',t:'問8',topic:'織機の分類（開口・よこ入れ）',type:'shared',sections:[
+ {roman:'',stem:'織機の分類には、開口機構による分類と、[A]糸の供給機構による分類がある。開口機構による分類は、[B]糸の運動に関係するもので、最も複雑な織物組織には[C]装置が用いられる。[A]糸の供給機構に関する分類は、シャットル（杼）を使う織機と使わない織機がある。シャットル（杼）を使わない無杼織機は、[D]織機、[E]織機、[F]織機などがある。[D]織機の特徴は、空気や水を利用しており、[E]織機は、剣のような長い帯状の器具の先端部で糸を把持し、開口内を往復し、また[F]織機は、グリッパーが開口内を飛走して、よこ入れする。',
+  words:['レピア','プレッサー','プロジェクタイル','タペット（カム）','たて','ジェット','よこ','ピッカー','ジャカード'],
+  items:[
+  {k:'A',a:7,w:'織機の分類は「開口（たて糸を上下に分ける）」と「よこ入れ（よこ糸の供給）」の2系統。シャットルを使うかどうかはよこ糸の供給方法の話。',r:'p.60–61'},
+  {k:'B',a:5,w:'開口はたて糸を上下に分けてよこ糸の通り道を作る動作なので、たて糸の運動に関係する。',r:'p.61'},
+  {k:'C',a:9,w:'簡単な組織はカムの原理のタペット、ヘルド8枚以上はドビー（30枚程度まで）、それ以上の紋織のような極めて複雑な組織はジャカード式開口装置。',r:'p.61'},
+  {k:'D',a:6,w:'ジェット織機は流体の噴流に糸をのせてよこ入れする。水を使うウォータジェット（疎水性の合繊フィラメント向き）と、空気を使うエアジェット（汎用性が高い）がある。',r:'p.61'},
+  {k:'E',a:1,w:'レピア織機はレピアと呼ぶアーム状の挿入装置の先端部で糸端をつかみ、開口内を往復してよこ入れする。',r:'p.60'},
+  {k:'F',a:3,w:'プロジェクタイル織機（グリッパー織機）は、シャットルの約1/10の質量のグリッパーが糸端を把持して開口内を飛走する。',r:'p.60'}]}
+]},
+{id:'q9',t:'問9',topic:'三原組織（平織・斜文織・朱子織）',type:'own',items:[
+ {k:'A',x:'一般に糸の浮きがもっとも長く、組織点が連続しない織物で糸の浮き方向に光沢がある。',o:['平織','斜文織','朱子織'],a:3,w:'朱子織は組織点（交錯点）が連続せず、糸の浮きが最も長いので、浮いている糸の方向に光沢が出る。',r:'p.57'},
+ {k:'B',x:'糸の交錯点が最も多いので、糸が接近しにくい。',o:['平織','斜文織','朱子織'],a:1,w:'平織は交錯点が最も多く糸が接近しにくいため、糸密度は粗いが外観は密に見え、丈夫な布になる。',r:'p.55'},
+ {k:'C',x:'この組織の織物に、ブロード、タフタなどがある。',o:['平織','斜文織','朱子織'],a:1,w:'平織の代表例：綿のブロード・ポプリン・金巾・キャラコ・ローン、絹や化合繊のタフタなど。',r:'p.55'},
+ {k:'D',x:'完全組織を作るには、少なくとも、たて、よこ各5本が必要である。',o:['平織','斜文織','朱子織'],a:3,w:'朱子織の完全組織はたて・よこ5本以上（例：3飛び5枚）。平織は2本、斜文織は3本以上。',r:'p.57'},
+ {k:'E',x:'一般に糸が最も密に並ぶので、織物は厚くなる。',o:['平織','斜文織','朱子織'],a:3,w:'朱子織は交錯点が少なく糸を最も密に並べられるので、厚地で柔らかく、光沢のある織物になる（摩擦には弱い）。',r:'p.57'},
+ {k:'F',x:'たてよこ各2本で完全組織をつくる。',o:['平織','斜文織','朱子織'],a:1,w:'平織はたて・よこ各2本で完全組織になる最も単純な組織。',r:'p.55'},
+ {k:'G',x:'この組織の織物に、デニム、ギャバジンなどがある。',o:['平織','斜文織','朱子織'],a:2,w:'斜文織（綾織）の例：綿のドリル・デニム、毛のサージ・ギャバジン。',r:'p.56'},
+ {k:'H',x:'織物の表面に斜めの線があらわれる。',o:['平織','斜文織','朱子織'],a:2,w:'斜文織の特徴は布面に斜文線（綾線）が現れること。たて・よこの糸数が等しければ45°。',r:'p.56'},
+ {k:'I',x:'この組織の織物に、金巾、キャラコなどがある。',o:['平織','斜文織','朱子織'],a:1,w:'金巾（かなきん）・キャラコは平織の綿織物。',r:'p.55'},
+ {k:'J',x:'完全組織を作るには、少なくとも、たて、よこ各3本が必要である。',o:['平織','斜文織','朱子織'],a:2,w:'斜文織の完全組織はたて・よこ各3本以上、任意の本数でつくれる。2本＝平織、3本＝斜文織、5本＝朱子織と整理する。',r:'p.56'},
+ {k:'K',x:'この組織の織物に、ドスキンなどがある。',o:['平織','斜文織','朱子織'],a:3,w:'朱子織の例：毛織物のドスキン、綿の綿朱子、絹の綸子・緞子など。',r:'p.57'}
+]},
+{id:'q10',t:'問10',topic:'減量・漂白・染料・捺染・色管理',star:true,type:'tf',items:[
+ {k:'A',s1:'ポリエステルの減量加工では、水酸化ナトリウムが用いられる。',s2:'ポリエステルの減量加工では、酵素が用いられる場合もある。',a:2,v1:[1,'ポリエステル織物を10〜20％の水酸化ナトリウム水溶液で加水分解し、質量の5〜25％を減量する（アルカリ減量加工）。'],v2:[0,'酵素減量加工は綿の減量加工。ポリエステルはアルカリで行う。'],r:'p.29, 105'},
+ {k:'B',s1:'酸性染料は、アニオン性染料である。',s2:'酸性染料は、セルロース繊維を染色するのに適している。',a:2,v1:[1,'酸性染料は−SO₃⁻基をもつアニオン性染料で、羊毛・絹・ナイロンの−NH₃⁺基とイオン結合する。'],v2:[0,'酸性染料はセルロース繊維にはほとんど染着しない。'],r:'p.108–109, 111'},
+ {k:'C',s1:'かせ染めは、先染めか後染めかの分類では、後染めに分類される。',s2:'トップ染めは、糸を染める方法である。',a:4,v1:[0,'かせ染めは糸染め（チーズ染め・かせ染め）の一つで、先染めに分類される。'],v2:[0,'トップ染めは羊毛などのトップ（梳毛工程でできる繊維の束）を円筒状に巻いて染める方法で、糸染めではない。'],r:'p.99, 116–117'},
+ {k:'D',s1:'フラットスクリーン捺染において、捺染糊をスクリーン型を通して布面に押し出し印捺するへら状の部品をスキージという。',s2:'フラットスクリーン捺染において、印捺される布は、エンドレスベルト上を止まることなく連続的に動く。',a:2,v1:[1,'スクリーン型の上の捺染糊をスキージでかいて（スキージング）布に印捺する。'],v2:[0,'自動フラットスクリーン捺染ではエンドレスベルトが柄の1ピッチ分ずつ間欠的に移動する。連続的に動くのはロータリスクリーン捺染。'],r:'p.120–122'},
+ {k:'E',s1:'L*a*b*表色系で、L*は明度を表す。',s2:'L*a*b*表色系で、a*はプラスの方向になるほど赤みが強い。',a:1,v1:[1,'L*は明るさ（0〜100、大きいほど明るい）。'],v2:[1,'a*はプラス方向ほど赤み、マイナス方向ほど緑み。b*はプラスほど黄み、マイナスほど青み。'],r:'p.128'},
+ {k:'F',s1:'ポリエステルと綿の混用織物を酸を用いてオパール加工を行う場合、除去される繊維は綿である。',s2:'オパール加工を行うと、透明感のある模様を得ることができる。',a:1,v1:[1,'耐薬品性の異なる2種の繊維の一方を薬剤で分解・溶解除去する。ポリエステル／綿なら、酸に弱い綿（セルロース）が除去される。'],v2:[1,'片方の繊維を除去した部分が薄く透けて、透明感のある模様になる。'],r:'p.29, 134'},
+ {k:'G',s1:'漂白は、精練後も繊維中に存在する微量の色素を、酸化剤や還元剤によって分解除去する工程である。',s2:'蛍光増白は、精練漂白後もわずかに黄褐色に見える布に青紫系の色素を付加させて白く見せる方法である。',a:2,v1:[1,'漂白は精練後も残る微量の色素を化学的に分解して白くする工程。酸化型漂白剤と還元型漂白剤がある。'],v2:[0,'これは青味付け（ブルーイング）の説明。蛍光増白は紫外線を吸収して紫〜青色（400〜450nm）の光を発光させて白く見せる方法。'],r:'p.104–105'},
+ {k:'H',s1:'染色現場において通常の色合わせで得られる色見本と染色物の等色はアイソメリズムの関係であり、どのような光源下でも同じ色に見えるので、光源の影響を考慮する必要はない。',s2:'染色処方では、いろいろな染料を配合して使う配合染色が行われる。',a:3,v1:[0,'色合わせの等色は、ある光源下でだけ同じ色に見えるメタメリズムの関係になることが多い。分光反射曲線が全く同じアイソメリズム（絶対等色）ではないので、光源の影響（演色性）を考慮する必要がある。'],v2:[1,'染色処方では複数の染料を配合する配合染色が行われる。'],r:'p.125, 127'}
+]},
+{id:'q11',t:'問11',topic:'染色加工・機能性加工',star:true,type:'own',items:[
+ {k:'A',x:'硫化染料による染色物では、保存中に[A]が発生して繊維をぜい化させることがある。',o:['硫化水素','硫酸','二硫化炭素'],a:2,w:'硫化染料の染色物は、保存中に不安定に結合した硫黄から硫酸が生成し、繊維を著しく脆化させることがある。',r:'p.111'},
+ {k:'B',x:'表面に凹型に模様を彫刻した型を用いて捺染を行う方式は、[B]である。',o:['フラットスクリーン捺染','ロータリスクリーン捺染','ローラ捺染'],a:3,w:'ローラ捺染は凹版（表面に模様を彫刻した銅ローラ）による捺染。スクリーン捺染は孔版。',r:'p.120, 122'},
+ {k:'C',x:'疎水性の合成繊維に対して親水性の化合物を付与し、汚れても洗濯により除去しやすくする加工は[C]加工である。',o:['ソイルガード','ソイルリリース','はっ水'],a:2,w:'汚れを落ちやすくする加工がソイルリリース（SR）加工。汚れを付きにくくする加工はソイルガード（SG）加工。',r:'p.139'},
+ {k:'D',x:'光触媒加工に用いられる代表的な物質には、[D]がある。',o:['二酸化硫黄','二酸化チタン','二硫化炭素'],a:2,w:'光が当たると触媒活性を示す光触媒の代表が二酸化チタン。繊維に付けて抗菌性や消臭性などを与える。',r:'p.140'},
+ {k:'E',x:'染料と結合することで、水に不溶の錯体を生成させ、染色物の堅ろう度を増進させる薬剤は[E]である。',o:['フィックス剤','バインダ','分散剤'],a:1,w:'フィックス剤（染色堅ろう度増進剤）は染料と結合して水に不溶の錯体を作るカチオン性の化合物などで、セルロース繊維の染色物の堅ろう度を上げる。',r:'p.114'},
+ {k:'F',x:'機能性を付与する加工方法として、浴中の薬剤を繊維との親和力によって吸収させることで行う加工法は、[F]と呼ばれる。',o:['吸尽加工法','プラズマ加工法','コーティング法'],a:1,w:'加工方法の分類：①吸尽加工法（浴中の薬剤を親和力で吸収させる）、②パッド・ドライ・キュア法、③コーティング加工など。',r:'p.135'},
+ {k:'G',x:'「化学物質の審査及び製造等の規制に関する法律」の第一種特定化学物質に指定される「ペルフルオロオクタン酸（PFOA）又はその塩」は、[G]に関連する物質である。',o:['親水加工','防しわ加工','はっ水加工'],a:3,w:'PFOAはふっ素化合物。耐久はっ水剤やはつ油剤にはふっ素系樹脂が使われてきたため、はっ水加工に関連する。テキストにPFOAの記載はないので、ふっ素系はっ水剤とセットで覚える。',r:'p.137–139'}
+]},
+{id:'q12',t:'問12',topic:'前処理・仕上加工・染料と助剤',star:true,type:'own',items:[
+ {k:'A',x:'加工糸織編物は、精練時あるいは精練前に熱と機械的もみ作用により弛緩させて、潜在ひずみを除去し、かさ高性と伸縮性を向上させる。',o:['ストレッチ処理','リラックス処理','パディング処理'],a:2,w:'リラックス処理の定義そのまま。加工糸織物ではひずみの緩和と潜在捲縮の発現、強撚糸織物ではしぼ立てが主な目的。',r:'p.100, 104'},
+ {k:'B',x:'ねじれてリボン状の扁平な綿繊維の形態がよじれを戻して円形状断面に変化することで光沢が向上することに加え、繊維内部の結晶および非晶構造の変化によって染色性も向上する加工',o:['マーセライズ加工','オーガンジ加工','ザブロ加工'],a:1,w:'マーセライズ加工（シルケット加工）は綿を濃い水酸化ナトリウム水溶液で処理し、光沢・寸法安定性・吸湿性・染色性を向上させる。',r:'p.105–106'},
+ {k:'C',x:'世界で最初の合成染料モーブが属しているカチオン性染料で、羊毛を鮮やかな色調に染めるが、耐光堅ろう度が低い。',o:['酸性染料','媒染染料','塩基性染料'],a:3,w:'塩基性染料はカチオン性染料で、世界初の合成染料モーブもこれ。絹や羊毛を鮮やかに染めるが耐光堅ろう度が低く、旧タイプは現在あまり使われない。',r:'p.112'},
+ {k:'D',x:'繊維間隙への染色液の侵入を助け、繊維表面を均一に濡らすことで染色むらを抑制するために用いる界面活性剤であり、特に疎水性繊維の場合に多く使用される。',o:['分散剤','促染剤','湿潤剤'],a:3,w:'湿潤剤は繊維間隙に染液が入るのを助け、繊維表面を均一に濡らして染料との接触をむらなくする。',r:'p.114'},
+ {k:'E',x:'捺染糊に添加され、蒸熱中に水蒸気を吸収して染料の拡散を容易にする作用を示す。反応染料による染色では尿素が代表的である。',o:['染料溶解剤','抜染剤','乳化剤'],a:1,w:'捺染用薬剤の②染料溶解剤。染料の溶解・分散を助け、蒸熱中に水蒸気を吸収して染料の拡散を容易にする。代表は尿素。抜染剤は地染めの色を抜く薬剤。',r:'p.115'},
+ {k:'F',x:'一般に画像入力部、画像処理部、およびプリント部で構成された生産システムであり、彫刻型を必要とせず、また、布面に直接模様を印捺することができる。少量生産・短納期・高精細・多色表現などの特徴がある。',o:['スクリーン捺染','インクジェットプリント','転写捺染'],a:2,w:'インクジェットプリントの説明そのまま。彫刻型（製版）が要らない無製版プリント。',r:'p.120, 123'},
+ {k:'G',x:'染色物の測色による色管理で用いられる均等色空間の表色系であり、物体色の色差としてその色差式が一般的に用いられている。',o:['マンセル表色系','XYZ表色系','L*a*b*表色系'],a:3,w:'XYZ表色系は計測量で感覚とかけ離れているため、均等色空間（UCS）としてL*a*b*表色系が色差表示などに使われる。',r:'p.128'},
+ {k:'H',x:'ローラなどを用いて生地表面を加圧して平滑化する加工',o:['カレンダ加工','シャリング加工','リップル加工'],a:1,w:'カレンダ加工はローラなどで生地表面を加圧して平滑化（または規則的形状を付与）し、光沢を増す加工。シャリングは毛羽を刈りそろえる加工。',r:'p.131'},
+ {k:'I',x:'表面に模様を彫刻した加熱金属ローラと弾性ローラとの間に生地を通すことにより、生地表面に彫刻どおりの凹凸と光沢差を与える加工',o:['メルトン加工','オーガンジ加工','エンボス加工'],a:3,w:'エンボス加工は彫刻した金属ローラで型押しする加工で、カレンダ加工の一種。合成繊維は熱可塑性で耐久性が得られる。',r:'p.132'},
+ {k:'J',x:'染色工程において、繊維高分子と共有結合で染着する染料で、セルロース繊維の主力染料として多く用いられている。',o:['反応染料','硫化染料','酸化染料'],a:1,w:'反応染料は繊維と共有結合で染着する染料で、直接染料や硫化染料に替わってセルロース繊維用の主力染料になっている。色が鮮明で湿潤堅ろう度が高い。',r:'p.110'}
+]}
+];
+
+const SETS = [
+ {no:'①',name:'練習問題①',date:'2026年10月16日配布',Q:Q1,skey:'seni-renshu1-answers',
+  points:[['q7','問7 編地特性'],['q8','問8 編物構造'],['q10','問10 前処理・仕上加工'],['q11','問11 染色・色管理'],['q12','問12 仕上加工・機能加工']]},
+ {no:'②',name:'練習問題②',date:'2026年10月27日配布',Q:Q2,skey:'seni-renshu2-answers',
+  points:[['q7','問7 編物構造'],['q5','問5 編物物性・収縮'],['q10','問10 漂白・減量・色管理'],['q12','問12 仕上加工'],['q11','問11 染色加工']]}
+];
+const CUR_KEY = 'seni-renshu-set';
+const states = SETS.map(()=>({}));   // per set: key -> chosen number
 let revealAll = false;
-const SKEY = 'seni-renshu1-answers';
 let canSave = false;
+let cur = SETS.length - 1;
 try {
-  localStorage.setItem(SKEY + '-test', '1'); localStorage.removeItem(SKEY + '-test'); canSave = true;
-  const raw = localStorage.getItem(SKEY);
-  if (raw) { const d = JSON.parse(raw); if (d && typeof d === 'object') for (const k in d) if (typeof d[k] === 'number') state[k] = d[k]; }
+  localStorage.setItem(CUR_KEY + '-test', '1'); localStorage.removeItem(CUR_KEY + '-test'); canSave = true;
+  SETS.forEach((s,i)=>{
+    const raw = localStorage.getItem(s.skey);
+    if (raw) { const d = JSON.parse(raw); if (d && typeof d === 'object') for (const k in d) if (typeof d[k] === 'number') states[i][k] = d[k]; }
+  });
+  const c = Number(localStorage.getItem(CUR_KEY)); if (c >= 1 && c <= SETS.length) cur = c - 1;
 } catch (e) { canSave = false; }
-function save(){ if(!canSave) return; try { localStorage.setItem(SKEY, JSON.stringify(state)); } catch (e) { canSave = false; } }
+try { const p = Number(new URLSearchParams(location.search).get('set')); if (p >= 1 && p <= SETS.length) cur = p - 1; } catch (e) {}
+let Q = SETS[cur].Q, state = states[cur];
+function save(){ if(!canSave) return; try { localStorage.setItem(SETS[cur].skey, JSON.stringify(state)); } catch (e) { canSave = false; } }
 let resetArmed = null;
-const total = Q.reduce((n,q)=>n+(q.sections?q.sections.reduce((m,s)=>m+s.items.length,0):q.items.length),0);
+const itemsOf = q => q.sections ? q.sections.flatMap(s=>s.items) : q.items;
+function setScore(i){
+  let done=0, ok=0, total=0;
+  SETS[i].Q.forEach(q=>itemsOf(q).forEach(it=>{ total++; const c=states[i][q.id+'-'+it.k]; if(c!=null){ done++; if(c===it.a) ok++; } }));
+  return {done, ok, total, score: done ? Math.round(ok/done*100) : null};
+}
+function avgScore(){
+  const sc = SETS.map((s,i)=>setScore(i)).filter(x=>x.score!=null);
+  return sc.length ? Math.round(sc.reduce((n,x)=>n+x.score,0)/sc.length) : null;
+}
+function header(){
+  const s = SETS[cur];
+  document.getElementById('eyebrow').textContent = `第69期 繊維の一般知識テスト ／ ${s.date}`;
+  document.getElementById('title').textContent = `${s.name} 解答と解説`;
+  document.getElementById('points').innerHTML = '<span class="lbl">学びのポイント</span>' + s.points.map(([id,t])=>`<a class="pt" href="#${id}">${t}</a>`).join('');
+  document.title = `繊維の一般知識 ${s.name}`;
+}
+function switchSet(i){
+  if (i === cur) return;
+  cur = i; Q = SETS[i].Q; state = states[i]; revealAll = false;
+  if (resetArmed) { clearTimeout(resetArmed); resetArmed = null; }
+  if (canSave) { try { localStorage.setItem(CUR_KEY, String(i+1)); } catch (e) {} }
+  try { history.replaceState(null, '', location.pathname + '?set=' + (i+1)); } catch (e) {}
+  header(); render(); window.scrollTo(0, 0);
+}
 
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const PG={"1":"13bB5rntYGX3vBBW1B5URjh7xbB-Nyc0U","2":"1KRlUx-TLKdc09X1UkQyaqExLdoVyhvi-","3":"1E7bSrUJHUauwKQ7RarHnBX8z9N6vvabY","4":"1LWRABOk9EBhCcwEMzpIt3gr9oGjYb-6l","5":"1TO9wTtImXqpotPqSRtUAIS-Vve71yCFf","6":"14sL9EUv1oC0uvzkuRwu_A3sjKKlZH47T","8":"1Ir1mpVH-mKRdgSWzEvhxb1K7F8M47VTv","10":"1EPUeHK_w1J5c7NmJlTTDuSXk9laUOlVD","11":"1sPuxDURyLVgLO4_oDYq8FxYB_r5P1Q3P","12":"1_MmUXho5SZxGWfJI_iDEhvA63tl2a2md","14":"1h6PFM6r0ZXPDxhJ5VgE61Yo0mj0s11Tv","15":"1YW4Oi71mKS8DFiTX8GvYySovyZwLpZ-Y","19":"1y2nKJUILLR7j_A_9ZGUyfUF5lKDeQtOE","21":"1mnZ6CWUFRn24bBwQayv_NInEx0cyaaOA","22":"1t2OxeSVFwBQnKn2FL_mWsH19dRPG--AP","23":"1VvxXzuUNYymcmpxpgv3UyiEk13wRseEg","30":"1_A4-HZZd6z6dNxG-Tr07B0MJtYco17iC","32":"11iA4qnAcV5pol4sW8Wf-LuRhbMBZg_W_","34":"1bb21TmAALgvxdZXVevC0Z6KwihRmpDDy","36":"1RtEOUCXUOHre0F3lb5PtYjthhZdOH19O","37":"1ci47jQjqidtLi8joFFtS6rOh9qVy_lGa","38":"1nNulRloyGEkG391Nd7B-rSvBfTcsKHp-","41":"1ex8oK7WAyWLt2NWdlAid32L4gQVu_wHs","42":"1o1QLBwcAlFlnIwfPTgOejmfpiBppO3wv","43":"1q8cKcOXZ_28A96ZST1kJpLTsu-cEhrM5","46":"1ft69BvOHZ-C0eyp-Z9CreNmDCZXnjdNm","48":"1XzY5XCFw8yxeaudqzcpxUIlywP8PpW2t","49":"1eVatdUJeuWR4oWClETB_uG1n3ukh-jV4","54":"1M3Gyu5Sn4x4XGu60B4OOJvXOJLnLDaEp","55":"1MiB2Kr7mhzEBymK9ZKCcoRHim704FjkC","56":"1DwztBXXlj7TKdwDIy0RkZRGfk2KUe74G","57":"1ALciCqZN_3sMPgTFE1BrxxTKvUM2GaWI","58":"1YN_Cgze8ykg084lo3u2I581G3mphlrSt","67":"1nfdZTbC_n1nW0k4_67DXKhokgS02eQ-m","68":"1OLqtTl8ZnsZp1HdnRstQ0aqjSmusymPO","72":"18AR8ufwcHZmCx21Kf3AF4GWbOs51Mw1A","73":"1STBZVnrDhgCyCSJsF8Pg13PLplS60s3j","74":"1wbxpIrRCFDafGe8jyAhfU5Jd4Kw6S21e","75":"1UCLFeKLenKmb3kjm3Q4Q5y9kOAe6Jbjy","76":"1zp8U1WeoQWBrc7DKfGzLVOK5anbhDnAI","79":"1p_5Zxyx0HSdwYO_GNDMQwSsTXq47lJlo","85":"15OI7DU41vtMTTsMsnl2ayegVhKHDEEa2","86":"1yGuMr7HkNGvxSCzEgsTs4xGJ2bvWclk6","87":"193Tex3rWPIU50s7-vmQaOmNrjbgHuyxE","90":"1PP6e5sQDmsAkZpeMbYPkjn6rMU76mlGR","91":"1yKJJyVWpzcdhd3A9ppkAwbN3XH5Ro9rH","93":"17OT-x-Ye6tYGVhwTcfUcd4cybKnOC21y","94":"1TLpg7TTdryIHlRpwIRE5kRVNGN5CUVjW","96":"1DrSSmDFRT8uGNk-sOCo6MA0teElOWBw3","97":"196INsN0r30JyIvkJ-3vTc9AcM__VV5dZ","103":"1R_qUu3uH9NdOiCFHrusmybvcyChH7SQP","104":"1xkMV2XDMxWbmfIXoCLkdABWV2EArem0R","105":"1Mgq1USZ9a3YU9K7tCA48HkDtiYwgoZgE","106":"14BN5Acw5abDpDwePvJdU-6ICmKfkychR","108":"1GfFiTe-9RtpMtRKvlSvEDftogCfFWHi9","110":"1n3o8MHy4OtFuGPESMZD8IxJoZpVB8xSl","111":"1kFAkfOGCkHZR7UkTwte5rWh4b5uAytZk","113":"1xjy5pmLajzwAf1XK7I904Xx0YgiwkBVp","115":"1kOYQpUzAobd_QRCTarcCcFzNPgtQ3Qmf","117":"1oOfi6WX5vgg8SgvKJ2rJmJTMXYobr3EQ","118":"10nOfFm2GqJcL66TvPSpWgSFsWoOLP9yu","122":"1xsm_cLKHkl5RHWjKRJVsTn66GmkLtpF-","123":"1ckOEhlvw4rttTCVQgTjmWJoUfhRzE_nF","126":"1bNTWytUH0breCHHx6f_rUHfek9uysAGh","127":"1_fPjgOVkwLBFl4IdVqDmzu2PYWcLeItW","129":"12LGWGrGvBK6JR-HsBo7xvqoeAfvU3t5-","132":"1RH3iZXYCYoCZx9mOHPMnXwGZ0PgpkWWv","134":"1beItd9t_B5R3_mcjKecTaVPD8Fxhj0eM","136":"11KG7GY-Zrur5KqfoNgnkoyo_Yf9luQ6y","138":"1lwPgWn4i0TIh0nOu48iA3XfSBeU4Myj_","139":"199qe6SbNwyIIISJ8UHfhiCw04lPw215s","140":"1l7fNzdhiSpETk6Pr40ZzwmZuuTKTNtvZ","141":"1USMgzN8nG_JVuPw7PPcc7sH6Z9yD5c80"};
@@ -374,9 +563,10 @@ function render(){
     if(q.type==='shared'){
       body = q.sections.map(s=>{
         const filled={}; s.items.forEach(it=>{ if(state[keyOf(q,it.k)]!=null||revealAll) filled[it.k]=s.words[it.a-1]; });
-        return `<div class="sec"><div class="stem-wrap"><div class="stem">${s.roman?`<span class="roman">${s.roman}.</span>`:''}${blanks(s.stem,filled)}</div>
+        const head = s.stem ? `<div class="stem">${s.roman?`<span class="roman">${s.roman}.</span>`:''}${blanks(s.stem,filled)}</div>` : (s.roman?`<div class="sec-label">${s.roman}.</div>`:'');
+        return `<div class="sec"><div class="stem-wrap">${head}
           <ul class="words">${s.words.map((w,i)=>`<li><b>${i+1}</b>${esc(w)}</li>`).join('')}</ul></div>`+
-          s.items.map(it=>`<div class="item"><div class="item-text"><span class="lab">（${it.k}）</span></div>${chipHTML(q,it,s.words,true)}${exHTML(q,it,s.words[it.a-1])}</div>`).join('')+'</div>';
+          s.items.map(it=>`<div class="item"><div class="item-text"><span class="lab">${it.x?it.k+'.':'（'+it.k+'）'}</span>${it.x?esc(it.x):''}</div>${chipHTML(q,it,s.words,true)}${exHTML(q,it,s.words[it.a-1])}</div>`).join('')+'</div>';
       }).join('');
     } else if(q.type==='tf'){
       body = `<p class="tf-key">1：①②とも正しい　2：①正 ②誤　3：①誤 ②正　4：①②とも誤り</p>`+
@@ -401,13 +591,18 @@ function render(){
     items.forEach(it=>{const c=state[keyOf(q,it.k)]; if(c!=null){done++; if(c===it.a) ok++;}});
     return `<a href="#${q.id}" class="${d?'done':''}">${q.t.replace('問','')}</a>`;
   }).join('');
-  document.getElementById('score').innerHTML = `得点 <b class="pt-big">${done?Math.round(ok/done*100):0}</b>点<span class="sc-sub">（${ok}/${done}問正解）</span>`;
-  const rows = Q.map(q=>{const its=q.sections? q.sections.flatMap(s=>s.items): q.items; const o=its.filter(it=>state[keyOf(q,it.k)]===it.a).length; const dn=its.filter(it=>state[keyOf(q,it.k)]!=null).length; return `<tr><th><a href="#${q.id}">${q.t}</a></th><td class="topic">${esc(q.topic)}</td><td class="num${dn&&o===dn?' full':''}">${dn?o+' / '+dn+'問正解':'未解答'}</td><td class="num">${dn?Math.round(o/dn*100)+'点':'—'}</td></tr>`;}).join('');
-  document.getElementById('result').innerHTML = `<h2>現在の得点</h2><div class="big"><b>${done?Math.round(ok/done*100):0}</b><span>点 / 100点</span></div><p class="rmeta">解答した ${done}問のうち ${ok}問正解（全${total}問中 ${done}問解答済み）。解いた問題だけで100点満点に換算しています。</p><div class="tbl"><table><tbody>${rows}</tbody></table></div>`;
+  document.getElementById('score').innerHTML = `${SETS[cur].no}得点 <b class="pt-big">${done?Math.round(ok/done*100):0}</b>点<span class="sc-sub">（${ok}/${done}問正解）</span>`;
+  const total = Q.reduce((n,q)=>n+itemsOf(q).length,0);
+  const av = avgScore();
+  document.getElementById('sets').innerHTML = SETS.map((s,i)=>{const sc=setScore(i); return `<button type="button" class="set-tab" role="tab" data-set="${i}" aria-selected="${i===cur}">${s.name}<span class="st">${sc.score==null?'未解答':sc.score+'点'}</span></button>`;}).join('') + `<span class="avg">平均 <b>${av==null?'—':av}</b>${av==null?'':'点'}</span>`;
+  const setRows = SETS.map((s,i)=>{const sc=setScore(i); return `<tr class="${i===cur?'cur':''}"><th>${s.name}</th><td class="num">${sc.done?sc.ok+' / '+sc.done+'問正解':'未解答'}</td><td class="num">${sc.done+' / '+sc.total+'問解答'}</td><td class="num">${sc.score==null?'—':sc.score+'点'}</td></tr>`;}).join('');
+  const counted = SETS.filter((s,i)=>setScore(i).score!=null).map(s=>s.no).join('・');
+  const rows = Q.map(q=>{const its=itemsOf(q); const o=its.filter(it=>state[keyOf(q,it.k)]===it.a).length; const dn=its.filter(it=>state[keyOf(q,it.k)]!=null).length; return `<tr><th><a href="#${q.id}">${q.t}</a></th><td class="topic">${esc(q.topic)}</td><td class="num${dn&&o===dn?' full':''}">${dn?o+' / '+dn+'問正解':'未解答'}</td><td class="num">${dn?Math.round(o/dn*100)+'点':'—'}</td></tr>`;}).join('');
+  document.getElementById('result').innerHTML = `<h2>現在の得点</h2><div class="big"><b>${av==null?'—':av}</b><span>${av==null?'':'点'}（平均）</span></div><p class="rmeta">${av==null?'まだ解答がありません。':'解答した問題集（'+counted+'）の得点の平均です。'}各問題集の得点は、解いた問題だけで100点満点に換算しています。</p><div class="tbl sets-tbl"><table><tbody>${setRows}<tr class="avg-row"><th>平均</th><td class="num"></td><td class="num"></td><td class="num">${av==null?'—':av+'点'}</td></tr></tbody></table></div><h3>${SETS[cur].name}の問題別（全${total}問中 ${done}問解答・${ok}問正解）</h3><div class="tbl"><table><tbody>${rows}</tbody></table></div>`;
   const rb=document.getElementById('revealAll'); rb.textContent = revealAll ? '元に戻す' : '解答をすべて表示'; rb.classList.toggle('primary',!revealAll); rb.classList.toggle('back',revealAll); rb.setAttribute('aria-pressed',String(revealAll));
   document.getElementById('revealNote').hidden = !revealAll;
-  if(!resetArmed) document.getElementById('reset').textContent = 'リセット';
-  document.getElementById('saveNote').textContent = canSave ? '押した解答はこの端末のブラウザに自動で保存され、次に開いたときも続きから解けます（リセットで消去）。' : 'この環境では解答を保存できません。ページを閉じると解答は消えます。';
+  if(!resetArmed) document.getElementById('reset').textContent = SETS[cur].no+'をリセット';
+  document.getElementById('saveNote').textContent = canSave ? '押した解答は問題集ごとにこの端末のブラウザに自動で保存され、次に開いたときも続きから解けます（リセットは表示中の問題集だけを消去）。' : 'この環境では解答を保存できません。ページを閉じると解答は消えます。';
 }
 
 document.getElementById('main').addEventListener('click',e=>{
@@ -421,12 +616,14 @@ document.getElementById('main').addEventListener('click',e=>{
 });
 document.getElementById('revealAll').addEventListener('click',()=>{revealAll=!revealAll;render();});
 document.getElementById('reset').addEventListener('click',e=>{
-  if(!resetArmed){ e.currentTarget.textContent='もう一度押すと消去'; resetArmed=setTimeout(()=>{resetArmed=null; render();},3000); return; }
+  if(!resetArmed){ e.currentTarget.textContent='もう一度押すと'+SETS[cur].no+'を消去'; resetArmed=setTimeout(()=>{resetArmed=null; render();},3000); return; }
   clearTimeout(resetArmed); resetArmed=null;
   for(const k in state) delete state[k]; revealAll=false;
-  if(canSave){ try{ localStorage.removeItem(SKEY); }catch(err){} }
+  if(canSave){ try{ localStorage.removeItem(SETS[cur].skey); }catch(err){} }
   render();
 });
+document.getElementById('sets').addEventListener('click',e=>{const b=e.target.closest('.set-tab'); if(b) switchSet(Number(b.dataset.set));});
+header();
 render();
 function setBarH(){const b=document.querySelector('.bar');if(b)document.documentElement.style.setProperty('--barH',b.offsetHeight+'px');}
 setBarH();window.addEventListener('resize',setBarH);
