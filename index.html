@@ -478,7 +478,7 @@ const CUR_KEY = 'seni-renshu-set';
 const states = SETS.map(()=>({}));   // per set: key -> chosen number
 let revealAll = false;
 let canSave = false;
-let cur = SETS.length - 1;
+let cur = 0;
 try {
   localStorage.setItem(CUR_KEY + '-test', '1'); localStorage.removeItem(CUR_KEY + '-test'); canSave = true;
   SETS.forEach((s,i)=>{
