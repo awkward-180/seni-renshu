@@ -91,6 +91,12 @@ section.q{background:var(--paper);border:1px solid var(--line);border-radius:10p
 .chip.wrong{background:var(--ng-soft);border-color:var(--ng);color:var(--ng);text-decoration:line-through}
 .chip[disabled]{cursor:default}
 .ex{margin-top:10px;border-left:3px solid var(--ok);padding:4px 0 4px 12px}
+.qreset{font:inherit;font-size:12px;line-height:1.4;border:1px solid var(--line);background:var(--paper);color:var(--muted);border-radius:6px;padding:2px 8px;cursor:pointer;white-space:nowrap}
+.qreset.armed{background:var(--ng);border-color:var(--ng);color:#ffffff;font-weight:700}
+.redo{display:inline-block;font:inherit;font-size:12.5px;background:none;border:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:6px 0 2px;cursor:pointer}
+.redo:hover,.qreset:hover{color:var(--ink)}
+.qreset.armed:hover{color:#ffffff}
+.redo:focus-visible,.qreset:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
 .ex .verdict{font-weight:700;font-size:14px}
 .ex .verdict.ng{color:var(--ng)}
 .ex .verdict.ok{color:var(--ok)}
@@ -485,6 +491,7 @@ try { const p = Number(new URLSearchParams(location.search).get('set')); if (p >
 let Q = SETS[cur].Q, state = states[cur];
 function save(){ if(!canSave) return; try { localStorage.setItem(SETS[cur].skey, JSON.stringify(state)); } catch (e) { canSave = false; } }
 let resetArmed = null;
+let qArmed = null, qTimer = null;
 const itemsOf = q => q.sections ? q.sections.flatMap(s=>s.items) : q.items;
 function setScore(i){
   let done=0, ok=0, total=0;
@@ -504,7 +511,7 @@ function header(){
 }
 function switchSet(i){
   if (i === cur) return;
-  cur = i; Q = SETS[i].Q; state = states[i]; revealAll = false;
+  cur = i; Q = SETS[i].Q; state = states[i]; revealAll = false; clearTimeout(qTimer); qArmed = null;
   if (resetArmed) { clearTimeout(resetArmed); resetArmed = null; }
   if (canSave) { try { localStorage.setItem(CUR_KEY, String(i+1)); } catch (e) {} }
   try { history.replaceState(null, '', location.pathname + '?set=' + (i+1)); } catch (e) {}
@@ -551,10 +558,11 @@ function exHTML(q,it,optText){
     const mk=v=>v[0]?'<span class="m o">○</span>':'<span class="m x">×</span>';
     return `<div class="ex">${verdict(q,it)} <b>正解 ${it.a}</b>（${TF[it.a-1]}）
       <div class="sv">${mk(it.v1)}<span>① ${esc(it.v1[1])}</span>${mk(it.v2)}<span>② ${esc(it.v2[1])}</span></div>
-      <span class="ref">テキスト ${refHTML(it.r)}</span></div>`;
+      <span class="ref">テキスト ${refHTML(it.r)}</span>${redoHTML(key)}</div>`;
   }
-  return `<div class="ex">${verdict(q,it)} <b>正解 ${it.a}　${esc(optText)}</b><p>${esc(it.w)}</p><span class="ref">テキスト ${refHTML(it.r)}</span></div>`;
+  return `<div class="ex">${verdict(q,it)} <b>正解 ${it.a}　${esc(optText)}</b><p>${esc(it.w)}</p><span class="ref">テキスト ${refHTML(it.r)}</span>${redoHTML(key)}</div>`;
 }
+function redoHTML(key){ return state[key]!=null ? `<button type="button" class="redo" data-key="${key}">この問題をやり直す</button>` : ''; }
 
 function render(){
   const main=document.getElementById('main');
@@ -581,7 +589,7 @@ function render(){
     const items = q.sections? q.sections.flatMap(s=>s.items): q.items;
     const done = items.filter(it=>state[keyOf(q,it.k)]!=null).length;
     const ok = items.filter(it=>state[keyOf(q,it.k)]===it.a).length;
-    return `<section class="q" id="${q.id}"><div class="q-head"><h2>${q.t}</h2><span class="topic">${esc(q.topic)}</span>${q.star?'<span class="star">学びのポイント</span>':''}<span class="prog">${ok}/${done} 正解 ・ 全${items.length}問</span></div>${body}</section>`;
+    return `<section class="q" id="${q.id}"><div class="q-head"><h2>${q.t}</h2><span class="topic">${esc(q.topic)}</span>${q.star?'<span class="star">学びのポイント</span>':''}<span class="prog">${ok}/${done} 正解 ・ 全${items.length}問</span>${done?`<button type="button" class="qreset${qArmed===q.id?' armed':''}" data-q="${q.id}">${qArmed===q.id?'もう一度押すと'+q.t+'を消去':q.t+'をやり直す'}</button>`:''}</div>${body}</section>`;
   }).join('');
   // nav + score
   let done=0, ok=0;
@@ -605,7 +613,28 @@ function render(){
   document.getElementById('saveNote').textContent = canSave ? '押した解答は問題集ごとにこの端末のブラウザに自動で保存され、次に開いたときも続きから解けます（リセットは表示中の問題集だけを消去）。' : 'この環境では解答を保存できません。ページを閉じると解答は消えます。';
 }
 
+function keepPos(el, sel, fn){
+  const y = el.getBoundingClientRect().top; fn();
+  const n = document.querySelector(sel); if(n){ window.scrollBy(0, n.getBoundingClientRect().top - y); }
+}
 document.getElementById('main').addEventListener('click',e=>{
+  const qb=e.target.closest('button.qreset');
+  if(qb){
+    const id=qb.dataset.q, q=Q.find(x=>x.id===id); if(!q) return;
+    if(qArmed!==id){
+      clearTimeout(qTimer); qArmed=id;
+      qTimer=setTimeout(()=>{ qArmed=null; keepPos(document.getElementById(id), '#'+id, render); },3000);
+      keepPos(qb, '#'+id+' button.qreset', render); return;
+    }
+    clearTimeout(qTimer); qArmed=null;
+    itemsOf(q).forEach(it=>{ delete state[keyOf(q,it.k)]; }); save();
+    keepPos(document.getElementById(id), '#'+id, render); return;
+  }
+  const rb=e.target.closest('button.redo');
+  if(rb){
+    const key=rb.dataset.key; delete state[key]; save();
+    const sel=`button.chip[data-key="${key}"]`; keepPos(document.querySelector(sel)||rb, sel, render); return;
+  }
   const b=e.target.closest('button.chip'); if(!b||b.disabled) return;
   state[b.dataset.key]=Number(b.dataset.n);
   save();
