@@ -181,7 +181,7 @@ footer{margin-top:32px;font-size:12.5px;color:var(--muted)}
   <p class="reveal-note" id="revealNote" hidden>解答を一時的に表示しています。得点・解答数は変わりません。「元に戻す」で元の画面に戻ります。</p>
   <main id="main"></main>
   <section class="result" id="result" aria-live="polite"></section>
-  <footer>ページ番号は『繊維製品の基礎知識 第1部』本文の印刷ページです。正答は配布された解答表と照合済みです。<br>利用状況（開いた回数など）を把握するため、Googleアナリティクスで計測しています。個人が特定されることはありません。</footer>
+  <footer>ページ番号は『繊維製品の基礎知識 第1部』本文の印刷ページです。正答は配布された解答表と照合済みです。<br>利用状況（開いた回数や、問題ごとの正解・不正解）を把握するため、Googleアナリティクスで計測しています。個人が特定されることはありません。</footer>
 </div>
 
 <script>
@@ -494,6 +494,25 @@ let Q = SETS[cur].Q, state = states[cur];
 function save(){ if(!canSave) return; try { localStorage.setItem(SETS[cur].skey, JSON.stringify(state)); } catch (e) { canSave = false; } }
 let resetArmed = null;
 let qArmed = null, qTimer = null;
+// 正解率の集計用：各問題の「最初の解答」だけを、個人が特定されない形でGoogleアナリティクスへ送る
+const SENT_KEY = 'seni-renshu-sent';
+let sent = {};
+try { const r = localStorage.getItem(SENT_KEY); if (r) sent = JSON.parse(r) || {}; } catch (e) {}
+function itemText(q,it){
+  let t = it.x || it.s1 || '';
+  if (!t && q.sections) { const s = q.sections.find(s=>s.items.includes(it)); t = s ? s.stem : ''; }
+  t = String(t).replace(/\s+/g,' ');
+  const i = t.indexOf('['+it.k+']');
+  if (t.length > 90 && i >= 0) t = (i > 40 ? '…' : '') + t.slice(Math.max(0,i-40), i+40) + '…';
+  if (it.s1) t = '①' + t;
+  return t.slice(0,95);
+}
+function trackAnswer(q,it,n){
+  const id = SETS[cur].no + q.t + '-' + it.k;
+  if (sent[id] || typeof gtag !== 'function') return;
+  sent[id] = 1; try { localStorage.setItem(SENT_KEY, JSON.stringify(sent)); } catch (e) {}
+  gtag('event','answer',{q_set: SETS[cur].name, q_id: id, q_text: itemText(q,it), q_correct: n===it.a ? 1 : 0});
+}
 const itemsOf = q => q.sections ? q.sections.flatMap(s=>s.items) : q.items;
 function setScore(i){
   let done=0, ok=0, total=0;
@@ -639,6 +658,7 @@ document.getElementById('main').addEventListener('click',e=>{
   }
   const b=e.target.closest('button.chip'); if(!b||b.disabled) return;
   state[b.dataset.key]=Number(b.dataset.n);
+  { const [qid,k]=b.dataset.key.split('-'); const q=Q.find(x=>x.id===qid); const it=q&&itemsOf(q).find(x=>x.k===k); if(it) trackAnswer(q,it,Number(b.dataset.n)); }
   save();
   const y=b.getBoundingClientRect().top;
   render();
