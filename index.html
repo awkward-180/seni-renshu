@@ -93,6 +93,8 @@ section.q{background:var(--paper);border:1px solid var(--line);border-radius:10p
 .chip.wrong{background:var(--ng-soft);border-color:var(--ng);color:var(--ng);text-decoration:line-through}
 .chip[disabled]{cursor:default}
 .ex{margin-top:10px;border-left:3px solid var(--ok);padding:4px 0 4px 12px}
+.ins{margin:2px 0 12px;padding:8px 12px;border-left:3px solid var(--indigo);background:var(--bg);border-radius:0 6px 6px 0;font-size:14px;line-height:1.6;font-weight:700;color:var(--ink)}
+@media (max-width:560px){.ins{font-size:13.5px}}
 .qreset{font:inherit;font-size:12px;line-height:1.4;border:1px solid var(--line);background:var(--paper);color:var(--muted);border-radius:6px;padding:2px 8px;cursor:pointer;white-space:nowrap}
 .qreset.armed{background:var(--ng);border-color:var(--ng);color:#ffffff;font-weight:700}
 .redo{display:inline-block;font:inherit;font-size:12.5px;background:none;border:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:6px 0 2px;cursor:pointer}
@@ -610,6 +612,10 @@ const Q3 = [
 ]}
 ];
 
+// 各大問の問題文（指示文）
+const INS = {"1": ["次の記述内A～Lの（　）内に、各々の語群の中から最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次の記述内[A]～[H]の後ろの（　）内に示す語句の中から最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次のA～Eの記述に最も関係が深いものを各々の語群の中から選び、解答記入欄の数字をマークしなさい。", "次の記述内[A]～[I]の後ろの（　）内に示す語句の中から最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次の記述内A～Jの（　）内に、下記の語群の中から最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次の記述内A～Kの（　）内に、各々の語群の中から最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次のA～Gの記述について、①②の両方が正しい場合には『1』、①が正しく②が間違っている場合には『2』、①が間違っており②が正しい場合には『3』、①②の両方が間違っている場合には『4』を解答記入欄にマークしなさい。", "次の記述内[A]～[G]の後ろの（　）内に示す語句の中から最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次の記述内[A]～[F]の後ろの（　）内に示す語句の中から最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次のA～Gの記述について、①②の両方が正しい場合には『1』、①が正しく②が間違っている場合には『2』、①が間違っており②が正しい場合には『3』、①②の両方が間違っている場合には『4』を解答記入欄にマークしなさい。", "次の記述内A～Jの（　）内に、各々の語群の中から最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次のA～Hの記述に最も関係が深いものを各々の語群の中から選び、解答記入欄の数字をマークしなさい。"], "2": ["次の記述内の[A]～[J]の後ろの（　）内に示す語句の中から、最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次の記述内の[A]～[H]の後ろの（　）内に示す語句の中から、最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次の記述内の[A]～[G]の後ろの（　）内に示す語句の中から、最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次のA～Jの記述に最も関係が深いものを各々の語群の中から選び、解答記入欄の数字をマークしなさい。", "次の記述内の[A]～[G]の後ろの（　）内に示す語句の中から、最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次のA～Eの記述に最も関係が深いものを下記の語群の中から選び、解答記入欄の数字をマークしなさい。", "次の記述内の[A]～[K]の後ろの（　）内に示す語句の中から最も適切なものを選び、解答記入欄の数字をマークしなさい。", "次の記述の（　）内に、下記の語群の中から最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次のA～Kの記述で、平織に該当するものは1、斜文織に該当するものは2、朱子織に該当するものは3を解答記入欄にマークしなさい。", "次のA～Hの記述について、①②の両方が正しい場合には『1』、①が正しく②が間違っている場合には『2』、①が間違っており②が正しい場合には『3』、①②の両方が間違っている場合には『4』を解答記入欄にマークしなさい。", "次のA～Gの文中の（　）内に、最も適当なものを各々の語群の中から選び、解答記入欄の数字をマークしなさい。", "次の文中のA～Jの記述に最も関係が深いものを各々の語群の中から選び、解答記入欄の数字をマークしなさい。"], "3": ["次の文中の[A]～[J]の後ろの（　）内に示す語句の中から、最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次のA～Eの説明として最もふさわしいものを下記記述の中から選び、解答記入欄の数字をマークしなさい。", "次の文中の[A]～[J]の後ろの（　）内に示す語句の中から、最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次のⅠ～Ⅴの文中の（　）内に、最も適当なものを各々の語群の中から選び、解答記入欄の数字をマークしなさい。", "織物、編物の基本組織について、それぞれの組織の説明として最も適当なものを次の1～9の中から選び、解答記入欄の数字をマークしなさい。", "次のⅠ～Ⅴの文中の（　）内に、最も適当なものを各々の語群の中から選び、解答記入欄の数字をマークしなさい。", "次の文中の[A]～[H]の後ろの（　）内に示す語句の中から、最も適当なものを選び、解答記入欄の数字をマークしなさい。", "生地名A～Eの説明として最も適当と思われるものを下記の記述から選び、解答記入欄の数字をマークしなさい。", "次の文中の[A]～[E]の後ろの（　）内に示す語句の中から、最も適当なものを選び、解答記入欄の数字をマークしなさい。", "次のA～Fの文について、①②の両方が正しい場合には『1』、①が正しく②が間違っている場合には『2』、①が間違っており②が正しい場合には『3』、①②の両方が間違っている場合には『4』を解答記入欄にマークしなさい。", "次のⅠ～Ⅹの文中の（　）内に、最も適当なものを各々の語群の中から選び、解答記入欄の数字をマークしなさい。", "次の文中のA～Iの記述に最も関係が深いものを各々の語群の中から選び、解答記入欄の数字をマークしなさい。"]};
+[Q1,Q2,Q3].forEach((qs,i)=>qs.forEach((q,j)=>{ q.ins = INS[String(i+1)][j]; }));
+
 const SETS = [
  {no:'①',name:'練習問題①',date:'2026年10月16日配布',Q:Q1,skey:'seni-renshu1-answers',
   points:[['q7','問7 編地特性'],['q8','問8 編物構造'],['q10','問10 前処理・仕上加工'],['q11','問11 染色・色管理'],['q12','問12 仕上加工・機能加工']]},
@@ -752,7 +758,7 @@ function render(){
     const items = q.sections? q.sections.flatMap(s=>s.items): q.items;
     const done = items.filter(it=>state[keyOf(q,it.k)]!=null).length;
     const ok = items.filter(it=>state[keyOf(q,it.k)]===it.a).length;
-    return `<section class="q" id="${q.id}"><div class="q-head"><h2>${q.t}</h2><span class="topic">${esc(q.topic)}</span>${q.star?'<span class="star">学びのポイント</span>':''}<span class="prog">${ok}/${done} 正解 ・ 全${items.length}問</span>${done?`<button type="button" class="qreset${qArmed===q.id?' armed':''}" data-q="${q.id}">${qArmed===q.id?'もう一度押すと'+q.t+'を消去':q.t+'をやり直す'}</button>`:''}</div>${body}</section>`;
+    return `<section class="q" id="${q.id}"><div class="q-head"><h2>${q.t}</h2><span class="topic">${esc(q.topic)}</span>${q.star?'<span class="star">学びのポイント</span>':''}<span class="prog">${ok}/${done} 正解 ・ 全${items.length}問</span>${done?`<button type="button" class="qreset${qArmed===q.id?' armed':''}" data-q="${q.id}">${qArmed===q.id?'もう一度押すと'+q.t+'を消去':q.t+'をやり直す'}</button>`:''}</div>${q.ins?`<p class="ins">${esc(q.ins)}</p>`:''}${body}</section>`;
   }).join('');
   // nav + score
   let done=0, ok=0;
