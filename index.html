@@ -93,6 +93,24 @@ section.q{background:var(--paper);border:1px solid var(--line);border-radius:10p
 .chip.wrong{background:var(--ng-soft);border-color:var(--ng);color:var(--ng);text-decoration:line-through}
 .chip[disabled]{cursor:default}
 .ex{margin-top:10px;border-left:3px solid var(--ok);padding:4px 0 4px 12px}
+.words.pick{display:flex;flex-wrap:wrap;gap:6px;color:var(--ink);font-size:13.5px;max-height:none}
+.words.pick li{margin:0}
+.words.pick .wpick{padding:5px 10px;border-radius:8px}
+.words.pick .wpick b{font-family:var(--font-mono);color:var(--muted);margin-right:3px;font-weight:600}
+.words.pick .wpick[disabled]{opacity:.55;cursor:default}
+.stem-wrap .words.pick{max-height:34vh;overflow-y:auto}
+.oblank[data-act]{cursor:pointer;text-decoration:underline dotted}
+.oblank.act{outline:2px solid var(--mark);outline-offset:1px;background:var(--paper)}
+.fillw.ng{color:var(--ng);border-color:var(--ng)}
+.orows{display:flex;flex-direction:column;gap:4px;margin:6px 0;max-height:30vh;overflow-y:auto}
+.orow{font-size:13.5px;line-height:1.55;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+.orow[data-act]{cursor:pointer}
+.orow .lab{font-weight:700;margin-right:4px}
+.orow.act{outline:2px solid var(--mark);outline-offset:0}
+.orow.ok{border-color:var(--ok)}.orow.ng{border-color:var(--ng)}
+.pickhint{font-size:12.5px;font-weight:700;color:var(--mark);margin:6px 0 2px}
+.stem-wrap.nostick{position:static;box-shadow:none;max-height:none}
+.stem-wrap.nostick .orows,.stem-wrap.nostick .words.pick{max-height:none;overflow:visible}
 .chip.long{border-radius:12px}
 .oblank{display:inline-block;font-weight:700;color:var(--indigo);background:var(--indigo-soft);border-radius:4px;padding:0 3px;margin:0 1px}
 .oblank.ok{background:var(--ok-soft);color:var(--ok)}
@@ -749,6 +767,29 @@ function oblanks(o,text,filled,s0){
     return `<span class="oblank${cls}">${mark(o,k)}</span>`+(filled[k]?`<span class="fillw">${rich(filled[k])}</span>`:'');
   });
 }
+const actSel = {};
+function sharedSec(q,o,sc,si,byK,st,lab){
+  const sid=q.id+'-s'+si, done=k=>state[keyOf(q,k)]!=null;
+  let act = actSel[sid] && sc.keys.includes(actSel[sid]) && !done(actSel[sid]) ? actSel[sid] : sc.keys.find(k=>!done(k));
+  if(revealAll) act=null;
+  const s0={}, filled={}; sc.keys.forEach(k=>{ s0[k]=st(k); if(s0[k]!=null){ const c=state[keyOf(q,k)]; filled[k]=sc.words[(c==null?byK[k].a:c)-1]; } });
+  const blankH=k=>{ const v=s0[k]; const cls=(v==null?'':(v?' ok':' ng'))+(k===act?' act':''); const tap=(!done(k)&&!revealAll)?` data-act="${k}" data-sec="${sid}" role="button" tabindex="0"`:'';
+    return `<span class="oblank${cls}"${tap}>${mark(o,k)}</span>`+(filled[k]?`<span class="fillw${s0[k]?'':' ng'}">${rich(filled[k])}</span>`:''); };
+  let text='';
+  if(sc.text) text=`<div class="stem otext">${lab(sc.lab)}${rich(sc.text).replace(/\[([A-L])\]/g,(m,k)=>blankH(k))}</div>`;
+  else if(sc.lab) text=`<div class="sec-label">${lab(sc.lab)}</div>`;
+  if(o.itemx){
+    text+=`<div class="orows">`+sc.keys.map(k=>{ const v=s0[k]; const tap=(!done(k)&&!revealAll)?` data-act="${k}" data-sec="${sid}" role="button" tabindex="0"`:'';
+      const badge=filled[k]?` <span class="fillw${v?'':' ng'}">${rich(filled[k])}</span>`:'';
+      return `<div class="orow${k===act?' act':''}${v==null?'':(v?' ok':' ng')}"${tap}>${o.nolab?'':`<span class="lab">${k}．</span>`}<span>${rich(o.itemx[k])}${badge}</span></div>`; }).join('')+`</div>`;
+  }
+  const hint = act ? `<div class="pickhint">${o.itemx?(o.nolab?rich(o.itemx[act]):act+'．'):mark(o,act)} の答えを${o.wl?'語群':'下'}からタップ</div>` : '';
+  const words = (o.wl?`<div class="wlab">${esc(o.wl)}</div>`:'')+`<ul class="words pick">`+sc.words.map((w,i)=>
+    `<li><button type="button" class="chip wpick" ${act?`data-key="${keyOf(q,act)}" data-n="${i+1}" data-sec="${sid}"`:'disabled'}><b>${i+1}．</b>${rich(w)}</button></li>`).join('')+`</ul>`;
+  const exs = sc.keys.filter(k=>done(k)||revealAll).map(k=>{const it=byK[k];
+    return `<div class="item"><div class="item-text"><span class="lab">${o.itemx&&!o.nolab?k+'．':(o.itemx?rich(o.itemx[k]):mark(o,k))}</span></div>${exHTML(q,it,sc.words[it.a-1])}</div>`;}).join('');
+  return `<div class="sec" data-secid="${sid}"><div class="stem-wrap${o.itemx?' nostick':''}">${text}${hint}${words}</div>${exs}</div>`;
+}
 function origBody(q){
   const o=q.orig, byK={}; itemsOf(q).forEach(it=>byK[it.k]=it);
   const st=k=>{const c=state[keyOf(q,k)], it=byK[k]; if(c==null&&!revealAll) return null; return c==null?true:c===it.a;};
@@ -757,7 +798,8 @@ function origBody(q){
     return Object.keys(o.tf).map(k=>{const it=byK[k],[a,b]=o.tf[k];
       return `<div class="item"><div class="stmts"><div class="stmt"><span class="lab">${k}．</span><span>①${rich(a)}</span></div><div class="stmt"><span></span><span>②${rich(b)}</span></div></div>${chipHTML(q,it,TF,false)}${exHTML(q,it)}</div>`;}).join('');
   }
-  return o.secs.map(sc=>{
+  return o.secs.map((sc,si)=>{
+    if(o.type==='shared') return sharedSec(q,o,sc,si,byK,st,lab);
     const filled={}, s0={};
     sc.keys.forEach(k=>{ s0[k]=st(k); if(o.type==='shared' && s0[k]!=null) filled[k]=sc.words[byK[k].a-1]; });
     const words = sc.words? (o.wl?`<div class="wlab">${esc(o.wl)}</div>`:'')+`<ul class="words">${sc.words.map((w,i)=>`<li><b>${i+1}．</b>${rich(w)}</li>`).join('')}</ul>`:'';
@@ -846,6 +888,8 @@ document.getElementById('main').addEventListener('click',e=>{
     const key=rb.dataset.key; delete state[key]; save();
     const sel=`button.chip[data-key="${key}"]`; keepPos(document.querySelector(sel)||rb, sel, render); return;
   }
+  const as=e.target.closest('[data-act]');
+  if(as){ actSel[as.dataset.sec]=as.dataset.act; const y=as.getBoundingClientRect().top; render(); const n=document.querySelector(`[data-secid="${as.dataset.sec}"]`); return; }
   const b=e.target.closest('button.chip'); if(!b||b.disabled) return;
   state[b.dataset.key]=Number(b.dataset.n);
   { const [qid,k]=b.dataset.key.split('-'); const q=Q.find(x=>x.id===qid); const it=q&&itemsOf(q).find(x=>x.k===k); if(it) trackAnswer(q,it,Number(b.dataset.n)); }
@@ -854,6 +898,7 @@ document.getElementById('main').addEventListener('click',e=>{
   render();
   const nb=document.querySelector(`button.chip[data-key="${b.dataset.key}"]`);
   if(nb){ window.scrollBy(0, nb.getBoundingClientRect().top - y); }
+  else if(b.dataset.sec){ const sb=document.querySelector(`button.wpick[data-sec="${b.dataset.sec}"][data-n="${b.dataset.n}"]`); if(sb) window.scrollBy(0, sb.getBoundingClientRect().top - y); }
 });
 document.getElementById('revealAll').addEventListener('click',()=>{revealAll=!revealAll;render();});
 document.getElementById('reset').addEventListener('click',e=>{
