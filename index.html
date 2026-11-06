@@ -93,6 +93,7 @@ section.q{background:var(--paper);border:1px solid var(--line);border-radius:10p
 .chip.wrong{background:var(--ng-soft);border-color:var(--ng);color:var(--ng);text-decoration:line-through}
 .chip[disabled]{cursor:default}
 .ex{margin-top:10px;border-left:3px solid var(--ok);padding:4px 0 4px 12px}
+.chip.long{border-radius:12px}
 .oblank{display:inline-block;font-weight:700;color:var(--indigo);background:var(--indigo-soft);border-radius:4px;padding:0 3px;margin:0 1px}
 .oblank.ok{background:var(--ok-soft);color:var(--ok)}
 .oblank.ng{background:var(--ng-soft);color:var(--ng)}
@@ -716,7 +717,7 @@ function keyOf(q,k){return q.id+'-'+k}
 function chipHTML(q,it,opts,numOnly){
   const key = keyOf(q,it.k), ch = state[key], shown = ch!=null || revealAll;
   return `<div class="chips" role="group" aria-label="${q.t} ${it.k} の選択肢">`+opts.map((o,i)=>{
-    const n=i+1; let cls='chip'+(numOnly?' num-only':'');
+    const n=i+1; let cls='chip'+(numOnly?' num-only':'')+(!numOnly&&String(o).length>22?' long':'');
     if(shown && n===it.a) cls+=' right';
     else if(ch===n && n!==it.a) cls+=' wrong';
     const label = numOnly? `<span>${n}</span>` : `<span class="num">${n}</span>${rich(o)}`;
@@ -767,7 +768,7 @@ function origBody(q){
       let head='';
       if(o.itemx) head = `<div class="item-text">${o.nolab?'':`<span class="lab">${k}．</span>`}${rich(o.itemx[k])}</div>`;
       else if(/\[[A-L]\]/.test(sc.text)) head = `<div class="item-text"><span class="lab">${mark(o,k)}</span></div>`;
-      return `<div class="item">${head}${chipHTML(q,it,opts,o.type==='shared')}${exHTML(q,it,opts[it.a-1])}</div>`;
+      return `<div class="item">${head}${chipHTML(q,it,opts,false)}${exHTML(q,it,opts[it.a-1])}</div>`;
     }).join('');
     return sticky ? `<div class="sec"><div class="stem-wrap">${text}${words}</div>${itemsH}</div>` : `<div class="sec">${text}${words}${itemsH}</div>`;
   }).join('');
