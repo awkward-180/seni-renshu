@@ -1,0 +1,5 @@
+# GitHub Pages（Jekyll）の設定：サイトとして公開しないファイル
+exclude:
+  - CLAUDE.md
+  - README.md
+  - _dev
