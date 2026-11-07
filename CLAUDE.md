@@ -18,10 +18,11 @@
 |---|---|
 | 本番サイト（チラシのQRコードの飛び先） | https://awkward-180.github.io/seni-renshu/ |
 | リポジトリ | https://github.com/awkward-180/seni-renshu（main ブランチを GitHub Pages で公開） |
-| Claude 上のコピー（アナリティクスなし版） | https://claude.ai/artifact/VphWXCpE8dAWar3Vu7YpEB |
-| 案内チラシ（A4、Claude のデザイン） | https://claude.ai/artifact/QuxLRqwpt8vsPSjatw5YVb |
+| 案内チラシ（A4） | `_dev/チラシ/チラシ.html`（ブラウザで開いて PDF に保存） |
+| 教科書ページ画像（Google Drive） | フォルダ「テキスト画像」 https://drive.google.com/drive/folders/1EVmcj7n2cbuf6Rqu84orubaQxurj8KAV （ファイル名 `p057.jpg` の形式） |
 | Googleアナリティクス（測定ID G-VXSR9RSYW6） | 探索レポート「問題別 正解率ランキング」 https://analytics.google.com/analytics/web/#/analysis/a414809595p562451225/edit/wHYF7VmLQ7O21E81UAtXZw |
 
+- 2026-11-07 から、作業はすべて Claude Code（このリポジトリ）で行う。claude.ai 上にあった「Claude 上のコピー（アナリティクスなし版）」と「チラシのデザイン」は更新を終了した。更新するのは本番サイトとこのリポジトリだけでよい。
 - `?set=1` / `?set=2` / `?set=3` を付けると、その問題集を開く。
 - 初めて開いた人には①を表示する。
 
@@ -34,7 +35,7 @@ _config.yml       GitHub Pages（Jekyll）の設定。CLAUDE.md などを公開�
 _dev/             開発用の資料（先頭が _ なので GitHub Pages では公開されない）
   原文転記/       問題集の原文を書き写したデータと、ORIG を作り直すスクリプト
   pagemap.json    教科書ページ番号 → Google Drive のファイルID（index.html 内の PG と同じ内容）
-  チラシ/         案内チラシの HTML の写しと QR 画像
+  チラシ/         案内チラシ（チラシ.html が正本）と QR 画像
   テスト/         Playwright によるスマホ幅の確認スクリプト
 ```
 
@@ -85,9 +86,28 @@ _dev/             開発用の資料（先頭が _ なので GitHub Pages では
 3. `git commit` と `git push` で main に反映する。GitHub Pages への反映には数分かかる。
    - コミットするときの作者名は awkward-180。
 4. 公開サイトに変更が出ているか確認する。`?v=任意の文字` を付けるとキャッシュを避けられる。
-5. 必要に応じて次の2つも更新する。
-   - PCフォルダ直下の `index.html`：手元で開くための写し。
-   - Claude 上のコピー：Googleアナリティクスのタグとフッターの計測説明を外した版。claude.ai で更新を頼む。
+5. PCフォルダ（このリポジトリの1つ上）直下の `index.html` は、以前の手元用の写し。更新しなくてよい。
+
+## PC（Windows）での準備
+
+- **Git for Windows**：コミットと公開に必要。初めて `git push` するときに GitHub のログイン画面が出るので、ログインは本人が行う。
+- **Node.js と Playwright**（任意）：`_dev/テスト/check.mjs` でスマホ幅を確認するときに使う。リポジトリの直下で `npm i -D playwright` と `npx playwright install chromium` を実行する。`node_modules/` は `.gitignore` 済み。
+- **Python**（任意）：教科書の本文検索（下記）に使う。
+
+## 教科書の本文を調べる
+
+- 教科書PDFから取り出した本文が `../作業用/教科書テキスト.txt` にある。著作物なので、このリポジトリには入れていない。
+- `python ../作業用/教科書検索.py 語句1 語句2` で、その語句が載っている教科書のページ番号と前後の文を表示する。解説を書くときや、ページ番号 `r` を付けるときに使う。
+- 図や表を確かめたいときは、PDF `../20261014_繊維製品の基礎知識.pdf` か、ページ画像 `../テキスト画像*/` を見る。
+
+## 教科書ページ画像を追加するとき
+
+1. 画像は PC の `../テキスト画像*/` フォルダにある。ない場合は教科書PDFから書き出す。
+2. Google Drive のフォルダ「テキスト画像」（上の表の URL）に `p093.jpg` のように3桁のページ番号の名前でアップロードする。
+   - Claude Code から Google Drive に接続できない場合は、本人にアップロードしてもらう。
+   - アップロードした画像の共有リンクも、本人からもらう。
+3. 共有リンクの `/d/` と `/view` の間がファイルIDになる。index.html の `PG` と `_dev/pagemap.json` に `"93":"ファイルID"` の形で追加する。
+4. フォルダとファイルの共有設定は変えない。
 
 ## 問題集を追加するとき（例：練習問題④）
 
@@ -103,7 +123,14 @@ _dev/             開発用の資料（先頭が _ なので GitHub Pages では
 
 ## 案内チラシ
 
-- 実体は Claude のデザイン（上の URL）。写しを `_dev/チラシ/Main.dc.html` に置いている。
+- 正本は `_dev/チラシ/チラシ.html`。QR 画像は `qr.png`。
+  - 以前は claude.ai のデザイン（ https://claude.ai/artifact/QuxLRqwpt8vsPSjatw5YVb ）で作っていた。`Main.dc.html` はその当時の元データ。
+- PDF にするときは、Chrome か Edge で `チラシ.html` を開き、「印刷 → PDFに保存」を選ぶ。設定は次のとおり。
+  - 用紙：A4
+  - 余白：なし
+  - 背景のグラフィック：オン
+  - 1ページに収まることを確認する。
+  - 配布用のPDFは、PCフォルダの `A4 案内チラシ.pdf`（上書きする前に古いものを `_to_delete` へ移す）。
 - 次の文言は本人の希望で入れたものなので、変えないこと。
   - 応援コメント「スキマ時間に1問ずつでOK。みんなで練習して、本番は全員合格をめざしましょう！」
   - 計測の説明
@@ -124,3 +151,4 @@ _dev/             開発用の資料（先頭が _ なので GitHub Pages では
 - 全36大問を原文どおりの表示に直した（指示文、本文、選択肢、語群）。
 - 語群の語句を直接タップして答える方式にし、押した語句を正誤の色で示すようにした。
 - 得点コーナーに「学びのポイントだけの得点」の表を追加した。
+- 2026-11-07：作業の場所を claude.ai から Claude Code に移した（このリポジトリと PC フォルダ）。

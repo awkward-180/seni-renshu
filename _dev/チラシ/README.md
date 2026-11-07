@@ -1,6 +1,6 @@
 # 案内チラシ
 
-- 正本：Claude のデザイン https://claude.ai/artifact/QuxLRqwpt8vsPSjatw5YVb
-- `Main.dc.html`：その HTML の写し（`{{accent}}` はアクセント色 #23407a に置き換えて表示）
-- `qr.png`：公開サイトへの QR コード
-- A4 縦（794×1123px）に収めること。
+- `チラシ.html`：正本。ブラウザで開くとA4のチラシが表示される。印刷→PDFに保存（A4・余白なし・背景のグラフィックを印刷）。
+- `qr.png`：公開サイト（https://awkward-180.github.io/seni-renshu/）への QR コード
+- `Main.dc.html`：以前 claude.ai のデザインで作っていたときの元データ（参考用）
+- A4 縦（794×1123px）に収めること。文言のルールはリポジトリ直下の CLAUDE.md を参照。
