@@ -696,6 +696,16 @@ function trackAnswer(q,it,n){
   sent[id] = 1; try { localStorage.setItem(SENT_KEY, JSON.stringify(sent)); } catch (e) {}
   gtag('event','answer',{q_set: SETS[cur].name, q_id: id, q_text: itemText(q,it), q_correct: n===it.a ? 1 : 0});
 }
+// やり直しの回数の集計用：押すたびにGAへ送る（個人は特定されない）
+// q_id は、1問なら「③問4-B」、大問なら「③問4」、問題集全体なら「③」
+function trackRedo(q,it){
+  if (typeof gtag !== 'function') return;
+  const set = SETS[cur];
+  const id = set.no + (q ? q.t : '') + (it ? '-' + it.k : '');
+  const p = {q_set: set.name, q_id: id, redo_scope: it ? 'item' : q ? 'question' : 'set'};
+  if (it) p.q_text = itemText(q,it);
+  gtag('event','redo',p);
+}
 const itemsOf = q => q.sections ? q.sections.flatMap(s=>s.items) : q.items;
 function setScore(i){
   let done=0, ok=0, total=0;
@@ -903,12 +913,15 @@ document.getElementById('main').addEventListener('click',e=>{
       keepPos(qb, '#'+id+' button.qreset', render); return;
     }
     clearTimeout(qTimer); qArmed=null;
+    trackRedo(q,null);
     itemsOf(q).forEach(it=>{ delete state[keyOf(q,it.k)]; }); save();
     keepPos(document.getElementById(id), '#'+id, render); return;
   }
   const rb=e.target.closest('button.redo');
   if(rb){
-    const key=rb.dataset.key; delete state[key]; save();
+    const key=rb.dataset.key;
+    { const [qid,k]=key.split('-'); const q=Q.find(x=>x.id===qid); const it=q&&itemsOf(q).find(x=>x.k===k); if(it) trackRedo(q,it); }
+    delete state[key]; save();
     const sel=`button.chip[data-key="${key}"]`; keepPos(document.querySelector(sel)||rb, sel, render); return;
   }
   const vw=e.target.closest('[data-view]');
@@ -930,6 +943,7 @@ document.getElementById('revealAll').addEventListener('click',()=>{revealAll=!re
 document.getElementById('reset').addEventListener('click',e=>{
   if(!resetArmed){ e.currentTarget.textContent='もう一度押すと'+SETS[cur].no+'を消去'; resetArmed=setTimeout(()=>{resetArmed=null; render();},3000); return; }
   clearTimeout(resetArmed); resetArmed=null;
+  trackRedo(null,null);
   for(const k in state) delete state[k]; revealAll=false;
   if(canSave){ try{ localStorage.removeItem(SETS[cur].skey); }catch(err){} }
   render();
