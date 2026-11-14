@@ -176,6 +176,14 @@ main>section.q{min-width:0}
 .stem-wrap .stem{max-height:30vh;overflow-y:auto;overscroll-behavior:contain}
 .stem-wrap .words{max-height:24vh;overflow-y:auto;overscroll-behavior:contain}
 .stem-wrap .stem:has(.figset){max-height:none;overflow:visible;position:sticky;top:var(--barH,64px);z-index:4;box-shadow:0 6px 8px -8px rgba(0,0,0,.35)}
+/* スマホ：上に貼り付く本文＋語群の高さを、画面の下に「解説・やり直す」が見える余白（約230px）が残るまでに抑える（2026-11-14） */
+@media (max-width:560px){
+  .stem-wrap{--stickMax:calc(100vh - var(--barH,64px) - 230px)}
+  @supports (height:100dvh){.stem-wrap{--stickMax:calc(100dvh - var(--barH,64px) - 230px)}}
+  .stem-wrap .stem{max-height:max(110px,calc(var(--stickMax) * .52))}
+  .stem-wrap .words,.stem-wrap .words.pick{max-height:max(90px,calc(var(--stickMax) * .36))}
+}
+.redo{padding:10px 0 6px}
 @media (max-width:560px){.set-tab{padding:2px 9px;font-size:13px}.set-tab .st{margin-left:4px}.avg b{font-size:15px}.set-tab .tl{display:none}.set-tab{flex:none}.sets{gap:4px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}.avg{flex:none}.avg{font-size:12px}}
 .reveal-note{margin:16px 0 0;padding:8px 12px;border:1px solid var(--mark);border-radius:8px;color:var(--ink);font-size:13.5px;background:var(--paper)}
 .score .pt-big{font-size:17px;color:var(--indigo);font-weight:700}
