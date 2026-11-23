@@ -776,7 +776,7 @@ function trackAnswer(q,it,n){
   const id = SETS[cur].no + q.t + '-' + it.k;
   if (sent[id] || typeof gtag !== 'function') return;
   sent[id] = 1; try { localStorage.setItem(SENT_KEY, JSON.stringify(sent)); } catch (e) {}
-  gtag('event','answer',{q_set: SETS[cur].name, q_id: id, q_text: itemText(q,it), q_correct: n===it.a ? 1 : 0});
+  gtag('event','answer',{q_set: SETS[cur].name, q_id: id, q_text: itemText(q,it), q_correct: OK(it,n) ? 1 : 0});   // 全員正解扱いの小問（⑤問11-D）は、どれを選んでも1
 }
 // やり直しの回数の集計用：押すたびにGAへ送る（個人は特定されない）
 // q_id は、1問なら「③問4-B」、大問なら「③問4」、問題集全体なら「③」
