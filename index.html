@@ -159,6 +159,27 @@ main>section.q{min-width:0}
 .figset.f4{grid-template-columns:repeat(4,minmax(0,1fr));max-width:504px}
 @media (max-width:560px){.figset.f4{grid-template-columns:1fr 1fr}.figset.f4 figure:nth-child(3){grid-column:auto;justify-self:stretch;width:auto}}
 .stmt u{text-underline-offset:3px}
+/* ヘッダーの出入り（2026-11-25）：下へスクロール・3秒スクロールなしで引っ込み、上へスクロールで出る。
+   --barH は「いま見えているヘッダーの高さ」（引っ込むと0）。問題文の貼り付き位置もこれに合わせて動く */
+.bar{transition:transform .25s ease}
+.bar.bar-hide{transform:translateY(calc(-100% - env(safe-area-inset-top,0px)))}
+.stem-wrap,.stem-wrap .stem{transition:top .25s ease}
+.bar-peek{position:fixed;left:0;right:0;top:0;height:calc(14px + env(safe-area-inset-top,0px));z-index:6;display:none}
+.bar-peek.on{display:block}
+@media (prefers-reduced-motion:reduce){.bar,.stem-wrap,.stem-wrap .stem{transition:none}}
+/* 図の拡大（2026-11-25）：図の枠（.zbox）の中だけで拡大・縮小・移動する。ページ全体は拡大しない */
+/* 拡大できる範囲（.zbox）はグレーの枠の横幅いっぱい。枠の内側の余白（--zp）の分だけ外へ広げる。図そのもの（.zfig）はいつもは70%の大きさ */
+.stem{--zp:14px}
+@media (max-width:560px){.stem-wrap .stem{--zp:10px}}
+.zbox{position:relative;overflow:hidden;margin:4px calc(-1 * var(--zp,0px)) 2px;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.zfig{width:calc((100% - 2 * var(--zp,0px)) * .7);margin:0 auto}
+.zfig:has(.figset){max-width:420px}.zfig:has(.f4){max-width:504px}.zfig:has(img.fig){max-width:392px}
+.zbox.zoomed{touch-action:none;cursor:grab;box-shadow:inset 0 0 0 2px var(--indigo)}
+.zbox .figset,.zbox img.fig{width:100%;max-width:none;margin:0}
+.zin{transform-origin:0 0}
+.zbox img{-webkit-user-drag:none;pointer-events:none}
+.zreset{position:absolute;right:6px;top:6px;z-index:2;font:inherit;font-size:12px;font-weight:700;border:1px solid var(--indigo);background:var(--paper);color:var(--indigo);border-radius:999px;padding:2px 10px;cursor:pointer}
+.zhint{font-size:11px;color:var(--muted);text-align:center;margin:2px 0 0}
 .stem-wrap{position:sticky;top:var(--barH,64px);z-index:3;background:var(--paper);margin:0 -6px;padding:6px 6px 2px;max-height:50vh;overflow-y:auto;border-bottom:1px solid var(--line);box-shadow:0 6px 8px -8px rgba(0,0,0,.25)}
 .stem-wrap .stem{margin-top:2px}
 @media (max-width:560px){.stem-wrap .stem{font-size:14px;line-height:1.6;padding:8px 10px;margin-bottom:6px}.stem-wrap .words{font-size:12.5px;gap:0 10px;line-height:1.6}}
@@ -227,6 +248,7 @@ footer{margin-top:32px;font-size:12.5px;color:var(--muted)}
     <div class="points" id="points"></div>
   </header>
 </div>
+<div class="bar-peek" id="barPeek" aria-hidden="true"></div>
 <div class="bar"><div class="bar-in">
   <div class="sets" id="sets" role="tablist" aria-label="問題集を選ぶ"></div>
   <nav class="nav" id="nav" aria-label="問題へ移動"></nav>
@@ -867,7 +889,7 @@ function exHTML(q,it,optText){
 }
 function redoHTML(key){ return state[key]!=null ? `<button type="button" class="redo" data-key="${key}">この問題をやり直す</button>` : ''; }
 
-function rich(t){ return esc(t).replace(/&lt;(\/?)(sub|sup|tr|th|td|u)( colspan=&quot;\d&quot;)?&gt;/g,(m,a,b,c)=>'<'+a+b+(c?c.replace(/&quot;/g,'"'):'')+'>').replace(/&lt;table class=&quot;otbl( tl)?&quot;&gt;/g,(m,t)=>'<table class="otbl'+(t||'')+'">').replace(/&lt;\/table&gt;/g,'</table>').replace(/\n/g,'<br>').replace(/\{\{fig:([\w-]+)\}\}/g,(m,k)=>FIGS[k]||''); }
+function rich(t){ return esc(t).replace(/&lt;(\/?)(sub|sup|tr|th|td|u)( colspan=&quot;\d&quot;)?&gt;/g,(m,a,b,c)=>'<'+a+b+(c?c.replace(/&quot;/g,'"'):'')+'>').replace(/&lt;table class=&quot;otbl( tl)?&quot;&gt;/g,(m,t)=>'<table class="otbl'+(t||'')+'">').replace(/&lt;\/table&gt;/g,'</table>').replace(/\n/g,'<br>').replace(/\{\{fig:([\w-]+)\}\}/g,(m,k)=>FIGS[k]?zoomHTML(k):''); }
 function mark(o,k){ return o.bl==='［］'?`［${k}］`:o.bl==='[]'?`[${k}]`:o.bl==='（ ）'?`（　${k}　）`:k; }
 function oblanks(o,text,filled,s0){
   return rich(text).replace(/\[([A-L])\]/g,(m0,k)=>{
@@ -983,6 +1005,7 @@ function render(){
   document.getElementById('revealNote').hidden = !revealAll;
   if(!resetArmed) document.getElementById('reset').textContent = SETS[cur].no+'をリセット';
   document.getElementById('saveNote').textContent = canSave ? '押した解答は問題集ごとにこの端末のブラウザに自動で保存され、次に開いたときも続きから解けます（リセットは表示中の問題集だけを消去）。' : 'この環境では解答を保存できません。ページを閉じると解答は消えます。';
+  applyZoom();
 }
 
 function keepPos(el, sel, fn){
@@ -1035,9 +1058,146 @@ document.getElementById('reset').addEventListener('click',e=>{
   render();
 });
 document.getElementById('sets').addEventListener('click',e=>{const b=e.target.closest('.set-tab'); if(b) switchSet(Number(b.dataset.set));});
+// ===== 図の拡大：図の枠の中だけで、2本指で拡大・縮小、1本指で移動、ダブルタップで切り替え =====
+const ZMAX = 5, zoomSt = {};   // 図の名前 → {s:倍率, x, y}（描き直しても状態を保つ）
+function zoomHTML(k){
+  return `<div class="zbox" data-fig="${k}"><div class="zin"><div class="zfig">${FIGS[k]}</div></div><button type="button" class="zreset" hidden>元の大きさ</button></div><p class="zhint">図は2本指で拡大・ダブルタップで切り替え</p>`;
+}
+function zClamp(box, z){
+  const w = box.clientWidth, h = box.clientHeight;
+  z.s = Math.min(ZMAX, Math.max(1, z.s));
+  z.x = Math.min(0, Math.max(w - w*z.s, z.x));
+  z.y = Math.min(0, Math.max(h - h*z.s, z.y));
+}
+function zApply(box){
+  const z = zoomSt[box.dataset.fig] || {s:1,x:0,y:0};
+  zClamp(box, z);
+  box.querySelector('.zin').style.transform = z.s > 1 ? `translate(${z.x}px,${z.y}px) scale(${z.s})` : '';
+  box.classList.toggle('zoomed', z.s > 1);
+  box.querySelector('.zreset').hidden = !(z.s > 1);
+}
+function applyZoom(){ document.querySelectorAll('.zbox').forEach(zApply); }
+function zSet(box, s, cx, cy){   // (cx,cy) は枠内の座標。その点を動かさずに倍率を変える
+  const k = box.dataset.fig, z = zoomSt[k] || (zoomSt[k] = {s:1,x:0,y:0});
+  const px = (cx - z.x) / z.s, py = (cy - z.y) / z.s;
+  z.s = Math.min(ZMAX, Math.max(1, s)); z.x = cx - px*z.s; z.y = cy - py*z.s;
+  if (z.s < 1.03) { z.s = 1; z.x = 0; z.y = 0; }
+  zApply(box);
+}
+function zReset(box){ zoomSt[box.dataset.fig] = {s:1,x:0,y:0}; zApply(box); }
+(function(){
+  const main = document.getElementById('main');
+  let g = null, lastTap = {t:0, x:0, y:0};
+  const local = (box, t) => { const r = box.getBoundingClientRect(); return [t.clientX - r.left, t.clientY - r.top]; };
+  const dist = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  const mid = (box, a, b) => { const [ax,ay]=local(box,a), [bx,by]=local(box,b); return [(ax+bx)/2, (ay+by)/2]; };
+  function begin(box, e){
+    const z = zoomSt[box.dataset.fig] || (zoomSt[box.dataset.fig] = {s:1,x:0,y:0});
+    if (e.touches.length >= 2) {
+      const [a,b] = e.touches; const [cx,cy] = mid(box,a,b);
+      g = {box, mode:'pinch', d0:dist(a,b), s0:z.s, px:(cx-z.x)/z.s, py:(cy-z.y)/z.s};
+    } else if (z.s > 1) {
+      const t = e.touches[0]; g = {box, mode:'pan', x0:t.clientX, y0:t.clientY, zx:z.x, zy:z.y, moved:false};
+    } else g = {box, mode:'none', x0:e.touches[0].clientX, y0:e.touches[0].clientY, moved:false};
+  }
+  main.addEventListener('touchstart', e=>{
+    const box = e.target.closest('.zbox'); if (!box || e.target.closest('.zreset')) return;
+    begin(box, e);
+    if (g.mode !== 'none') e.preventDefault();
+  }, {passive:false});
+  main.addEventListener('touchmove', e=>{
+    if (!g) return;
+    const box = g.box, z = zoomSt[box.dataset.fig];
+    if (g.mode === 'pinch' && e.touches.length >= 2) {
+      e.preventDefault();
+      const [a,b] = e.touches; const [cx,cy] = mid(box,a,b);
+      z.s = Math.min(ZMAX, Math.max(1, g.s0 * dist(a,b) / g.d0));
+      z.x = cx - g.px*z.s; z.y = cy - g.py*z.s; zApply(box);
+    } else if (g.mode === 'pan') {
+      e.preventDefault();
+      const t = e.touches[0]; const dx = t.clientX - g.x0, dy = t.clientY - g.y0;
+      if (Math.abs(dx) + Math.abs(dy) > 6) g.moved = true;
+      z.x = g.zx + dx; z.y = g.zy + dy; zApply(box);
+    } else if (g.mode === 'none') {
+      const t = e.touches[0]; if (Math.abs(t.clientX-g.x0) + Math.abs(t.clientY-g.y0) > 10) g.moved = true;
+    }
+  }, {passive:false});
+  main.addEventListener('touchend', e=>{
+    if (!g) return;
+    const box = g.box, z = zoomSt[box.dataset.fig];
+    if (e.touches.length >= 1) { begin(box, e); return; }   // 2本指→1本指：続けて移動できるように
+    if (g.mode === 'pinch' && z.s < 1.03) zReset(box);
+    const tapped = !g.moved && g.mode !== 'pinch';
+    if (tapped) {
+      const t = e.changedTouches[0], now = Date.now();
+      if (now - lastTap.t < 320 && Math.abs(t.clientX-lastTap.x) + Math.abs(t.clientY-lastTap.y) < 30) {
+        e.preventDefault();
+        if (z.s > 1) zReset(box); else { const [cx,cy] = local(box,t); zSet(box, 2.5, cx, cy); }
+        lastTap = {t:0, x:0, y:0};
+      } else lastTap = {t:now, x:t.clientX, y:t.clientY};
+    }
+    g = null;
+  }, {passive:false});
+  main.addEventListener('touchcancel', ()=>{ g = null; });
+  // iPhone の Safari：図の上ではページ全体の拡大をしない
+  main.addEventListener('gesturestart', e=>{ if (e.target.closest && e.target.closest('.zbox')) e.preventDefault(); });
+  // PC：Ctrl＋ホイール（トラックパッドのピンチ）で拡大、ドラッグで移動、ダブルクリックで切り替え
+  main.addEventListener('wheel', e=>{
+    const box = e.target.closest('.zbox'); if (!box || !e.ctrlKey) return;
+    e.preventDefault(); const z = zoomSt[box.dataset.fig] || {s:1};
+    const [cx,cy] = local(box, e); zSet(box, z.s * Math.exp(-e.deltaY / 200), cx, cy);
+  }, {passive:false});
+  let drag = null;
+  main.addEventListener('mousedown', e=>{
+    const box = e.target.closest('.zbox'); if (!box || e.target.closest('.zreset')) return;
+    const z = zoomSt[box.dataset.fig]; if (!z || z.s <= 1) return;
+    e.preventDefault(); drag = {box, x0:e.clientX, y0:e.clientY, zx:z.x, zy:z.y};
+  });
+  window.addEventListener('mousemove', e=>{ if (!drag) return; const z = zoomSt[drag.box.dataset.fig]; z.x = drag.zx + e.clientX - drag.x0; z.y = drag.zy + e.clientY - drag.y0; zApply(drag.box); });
+  window.addEventListener('mouseup', ()=>{ drag = null; });
+  main.addEventListener('dblclick', e=>{
+    const box = e.target.closest('.zbox'); if (!box) return;
+    const z = zoomSt[box.dataset.fig];
+    if (z && z.s > 1) zReset(box); else { const [cx,cy] = local(box, e); zSet(box, 2.5, cx, cy); }
+  });
+  main.addEventListener('click', e=>{ const b = e.target.closest('.zreset'); if (b) zReset(b.closest('.zbox')); });
+  window.addEventListener('resize', applyZoom);
+})();
+
+// ===== ヘッダーの出入り =====
+// 下へスクロールすると引っ込み、上へスクロールすると出る。3秒スクロールしないと引っ込む。
+// ページのいちばん上（ヘッダーが貼り付く前）と、ヘッダーに触れている間は引っ込めない。画面の上端をタップすると出る。
+(function(){
+  const bar = document.querySelector('.bar'), peek = document.getElementById('barPeek');
+  let hidden = false, lastY = window.scrollY, acc = 0, timer = null, touching = false;
+  const barFull = () => bar.offsetHeight;
+  const wrap = bar.nextElementSibling;
+  // ヘッダーがまだ貼り付いていない（ページのいちばん上付近）か。ヘッダーのすぐ下の要素は位置が動かないので、それを基準にする
+  const atTop = () => window.scrollY <= wrap.offsetTop - bar.offsetHeight - (parseFloat(getComputedStyle(bar).top) || 0) + 2;
+  function setVar(){ document.documentElement.style.setProperty('--barH', (hidden ? 0 : barFull()) + 'px'); }
+  function show(){ if (!hidden) return; hidden = false; bar.classList.remove('bar-hide'); peek.classList.remove('on'); setVar(); }
+  function hide(){
+    if (hidden || touching || atTop()) return;
+    hidden = true; bar.classList.add('bar-hide'); peek.classList.add('on'); setVar();
+  }
+  function idle(){ clearTimeout(timer); timer = setTimeout(hide, 3000); }
+  window.addEventListener('scroll', ()=>{
+    const y = window.scrollY, dy = y - lastY; lastY = y;
+    if (atTop()) { show(); acc = 0; clearTimeout(timer); return; }
+    acc = (acc > 0) === (dy > 0) ? acc + dy : dy;   // 同じ向きに続けて動いた量
+    if (acc > 24) hide(); else if (acc < -12) show();
+    idle();
+  }, {passive:true});
+  bar.addEventListener('pointerdown', ()=>{ touching = true; clearTimeout(timer); });
+  window.addEventListener('pointerup', ()=>{ if (touching) { touching = false; idle(); } });
+  window.addEventListener('pointercancel', ()=>{ if (touching) { touching = false; idle(); } });
+  peek.addEventListener('click', ()=>{ show(); idle(); });
+  window.barSync = setVar;   // setBarH（画面の大きさが変わったとき）から呼ぶ
+  if (!atTop()) idle();
+})();
 header();
 render();
-function setBarH(){const b=document.querySelector('.bar');if(b)document.documentElement.style.setProperty('--barH',b.offsetHeight+'px');}
+function setBarH(){ barSync(); }
 setBarH();window.addEventListener('resize',setBarH);
 </script>
 
