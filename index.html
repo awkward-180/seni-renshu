@@ -180,6 +180,7 @@ main>section.q{min-width:0}
 .zbox img{-webkit-user-drag:none;pointer-events:none}
 .zreset{position:absolute;right:6px;top:6px;z-index:2;font:inherit;font-size:12px;font-weight:700;border:1px solid var(--indigo);background:var(--paper);color:var(--indigo);border-radius:999px;padding:2px 10px;cursor:pointer}
 .zhint{font-size:11px;color:var(--muted);text-align:center;margin:2px 0 0}
+.kpick{display:flex;flex-wrap:wrap;align-items:center;gap:6px 4px;margin:2px 0 8px}.kpick .kpl{font-size:12.5px;color:var(--muted);margin-right:2px}.kpick .oblank{cursor:pointer}
 .stem-wrap{position:sticky;top:var(--barH,64px);z-index:3;background:var(--paper);margin:0 -6px;padding:6px 6px 2px;max-height:50vh;overflow-y:auto;border-bottom:1px solid var(--line);box-shadow:0 6px 8px -8px rgba(0,0,0,.25)}
 .stem-wrap .stem{margin-top:2px}
 @media (max-width:560px){.stem-wrap .stem{font-size:14px;line-height:1.6;padding:8px 10px;margin-bottom:6px}.stem-wrap .words{font-size:12.5px;gap:0 10px;line-height:1.6}}
@@ -909,6 +910,8 @@ function sharedSec(q,o,sc,si,byK,st,lab){
     return `<span class="oblank${cls}${k===view?' viewing':''}"${tap}>${mark(o,k)}</span>`+(filled[k]?`<span class="fillw${s0[k]?'':' ng'}">${rich(filled[k])}</span>`:''); };
   let text='';
   if(sc.text) text=`<div class="stem otext">${lab(sc.lab)}${rich(sc.text).replace(/\[([A-L])\]/g,(m,k)=>blankH(k))}</div>`;
+  // 本文に空欄がない記号（⑤問9Ⅰの「（A）～（E）」の B・C・D など）も選べるように、記号を並べて出す（2026-11-26）
+  if(sc.text && !o.itemx && sc.keys.some(k=>!sc.text.includes('['+k+']'))) text+=`<div class="kpick"><span class="kpl">答える記号：</span>${sc.keys.map(k=>blankH(k)).join('')}</div>`;
   else if(sc.lab) text=`<div class="sec-label">${lab(sc.lab)}</div>`;
   if(o.itemx){
     text+=`<div class="orows">`+sc.keys.map(k=>{ const v=s0[k]; const tap=revealAll?'':(!done(k)?` data-act="${k}" data-sec="${sid}" role="button" tabindex="0"`:` data-view="${k}" data-sec="${sid}" role="button" tabindex="0"`);
